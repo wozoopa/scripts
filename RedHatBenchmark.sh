@@ -1,25 +1,25 @@
 #!/bin/bash
 #======================================================================================
-# ===    Security Configuration Benchmark  for RedHat based systems    ===
-#    based on version 2.0.0, Dec 16th 2011
+# ===	Security Configuration Benchmark  for RedHat based systems	===
+#	based on version 2.0.0, Dec 16th 2011
 #  
-#  TODO:
-#     - add main description
-#    - add description to functions
-#    - fix clean coding (ex:
-#        ^VARIABLE_NAMES -> lower case
-#        ^Function_Names -> upper case
-#    - finish questions
-#    - finish output formatting (not required)
-#    - use perl where possible for better performance
-#    - user arrays for better performance
+#  TODO: 
+# 	- add main description
+#	- add description to functions
+#	- fix clean coding (ex:
+#		^VARIABLE_NAMES -> lower case
+#		^Function_Names -> upper case
+#	- finish questions
+#	- finish output formatting (not required)
+#	- use perl where possible for better performance
+#	- user arrays for better performance
 #
-#    NOTES:
+#	NOTES:
 # 1) AUDIT_ONLY MODE:
-#     - This script checks if correct settings/parameters are set
-#        and it does not fix them
-#    - available modes: 0 - Audit only, 1 - Audit and try to Fix
-#
+# 	- This script checks if correct settings/parameters are set
+#		and it does not fix them
+#	- available modes: 0 - Audit only, 1 - Audit and try to Fix
+# 
 #======================================================================================
 set +o noclobber
 
@@ -27,15 +27,16 @@ AUDITMODE="0"
 
 Begin_Security_Configuration_Benchmark() {
 #=== Begin_Security_Configuration_Benchmark ==========================
-#    
+#	
 # DESCRIPTION: Container of all functions (etc.) for performing
-#         Security Benchmark.
+# 		Security Benchmark.
 # PARAMETER: NONE
 #=========================================
 
+
 Check_User() {
 #=== Check_User ==========================
-#    
+#	
 # DESCRIPTION: Make sure we're root
 # PARAMETER: NONE
 #=========================================
@@ -48,6 +49,8 @@ fi
 
 Check_User
 
+
+
 NAME=$(basename $0 .sh)
 Date=$(date +%Y%m%d_%H%M)
 LOG=" "
@@ -55,13 +58,15 @@ BKPDIR="$(pwd)/Benchmark_backup"
 if [ ! -d $BKPDIR ]; then  mkdir $BKPDIR; else echo "exists" >>/dev/null; fi
 TMPF="$(pwd)/etc-fstab.tmp"
 
+
+
 #FSTAB="/etc/fstab"
-#FSTAB="/home/ec2-user/work/benchmark-test/test-fstab"                # used for testing on Ec2
-FSTAB="$(pwd)/etc-fstab.local"                                  # used for testing on Ec2 AMI Images
+#FSTAB="/home/ec2-user/work/benchmark-test/test-fstab"				# used for testing on Ec2
+FSTAB="$(pwd)/etc-fstab.local"              					# used for testing on Ec2 AMI Images
 TMP="/tmp"
-#TMP="/media/tmp"                                # used for testing on Ec2
+#TMP="/media/tmp"								# used for testing on Ec2
 VAR="/var"
-#VAR="/media/var"                                # used for testing on Ec2
+#VAR="/media/var"								# used for testing on Ec2
 VARTMP="/var/tmp"
 #VARTMP="/media/var/tmp"
 VARLOG="/var/log"
@@ -74,6 +79,7 @@ GRUB="/etc/grub.conf"
 
 echo "Creating temporary working file ${FSTAB}"
 cp /etc/fstab ${FSTAB}
+
 
 fstabName=$( echo $FSTAB | sed 's/\//\t/g' | awk '{print $NF}')
 CheckTmpMount=$(mount | grep "$TMP" |grep -v "log\|bind\|var\|tmpfs" | wc -l)
@@ -127,11 +133,12 @@ echo "Please provide 2 arguments to CheckMountPoint function"
 mount | grep "$1" | grep "$2" | wc -l
 }
 
-err() {
+
+err() { 
 #==== err =======================================================
 #
 # Display Error message with nice formatting, in red color
-#
+# 
 # usg: err "<count_of_tabs>" "<Message>"
 #============================================================================
 
@@ -144,9 +151,11 @@ printf_new() {
 echo -e "$(printf_new "\t" $1) ..................... \033[1;31m ERROR: $2 \033[m"
 }
 
+
 skipNoticeA() {
 echo -e "\033[1;36m  ..................................................................................... NOTICE: $1 \n \033[m"
 }
+
 
 skipNotice() {
 echo -e "\033[1;36m \t \t \t \t \t \t \t \t \t ..................... NOTICE: Skipping parameter checks for $1 mount point. \033[m" # just add mount point
@@ -156,11 +165,12 @@ skipMountCheck() {
 echo -e "\033[1;36m \t \t \t \t \t \t \t \t \t ..................... NOTICE: Skipping parameter checks for $1 mount point. \033[m" # just add mount point
 }
 
-Notice() {
+
+Notice() { 
 #==== Notice =======================================================
 #
 # Display Notice message with nice formatting
-#
+# 
 # usage: Notice "<count_of_tabs>" "<Message>"
 #===================================================================
 printf_new() {
@@ -172,13 +182,14 @@ printf_new() {
 echo -e "$(printf_new "\t" $1) ..................... \033[1;36m $2 \033[m"
 }
 
-Notice2() {
+Notice2() { 
 #==== Notice2 =======================================================
 #
 # Display Notice message with nice formatting
-#
+# 
 # usage: Notice2 "<count_of_tabs>" "<Message>"
 #====================================================================
+
 
 printf_new() {
  str=$1
@@ -197,11 +208,12 @@ DIS() {
     echo -e "\033[1;36m DISABLED \033[m"
 }
 
-warn() {
+
+warn() { 
 #==== warn =======================================================
 #
 # Display Warning message with nice formatting, in red color
-#
+# 
 # usage: warn "<count_of_tabs>" "<Message>"
 #=================================================================
 
@@ -214,11 +226,13 @@ printf_new() {
 echo -e "\n $(printf_new "\t" $1) ..................... \033[1;31m WARNING: $2 \033[m"
 }
 
+
+
 OK() {
 #==== OK =======================================================
 #
 # Display OK message with nice formatting
-#
+# 
 # usage: OK "<count_of_tabs>" "<Message>"
 #=================================================================
 
@@ -228,14 +242,17 @@ printf_new() {
  v=$(printf "%-${num}s" "$str")
  echo "${v// /\t}"
 }
-echo -e "$(printf_new "\t" $1) ..................... OK"
+echo -e "$(printf_new "\t" $1) ..................... OK" 
 }
+
 
 CheckupErr() {
 echo -e "\033[1;31mWARNING: something went wrong $1. \033[m"
 }
 
+
 # echo  -e "\033[1;36m....................Change requires reboot. \033[m"
+
 
 VarMountErr() {
 echo -e "\033[1;31mWARNING: $VAR NOT MOUNTED ON SEPARATE PARTITION !!! \033[m"
@@ -261,6 +278,7 @@ sudo mount -o remount,nodev $1
 
 }
 
+
 FixTmpNodev() { # replace this function in the script with remountNodev $TMP
 echo "Remounting $TMP with nodev parameter"
 sudo mount -o remount,nodev $TMP
@@ -284,71 +302,72 @@ echo "Remounting $TMP with noexec parameter"
 sudo mount -o remount,nodev,nosuid,noexec $TMP
 }
 
+
 TmpCheck() {
 
-        echo -n "1.1.2a - Checking mounted $TMP for nodev "
+		echo -n "1.1.2a - Checking mounted $TMP for nodev "
         if [ "$CheckTmpNodev" = "0" ]; then
-                warn "11" "NOT mounted with nodev"
+				warn "11" "NOT mounted with nodev"
         elif [ "$CheckTmpNodev" = "1" ]; then
-                OK "6"
-        else
-                CheckupErr
+                OK "6" 
+		else
+				CheckupErr
         fi
 
-        echo -n "1.1.3a - Checking mounted $TMP for nosuid "
+		echo -n "1.1.3a - Checking mounted $TMP for nosuid "
         if [ "$CheckTmpNosuid" = "0" ]; then
                 #TmpNosuidWarn
-                warn "11" "NOT mounted with nosuid"
+				warn "11" "NOT mounted with nosuid"
         elif [ "$CheckTmpNosuid" = "1" ]; then
-                OK "6"
-        else
-                CheckupErr
+                OK "6" 
+		else
+				CheckupErr
         fi
 
-        echo -n "1.1.4a - Checking mounted $TMP for noexec "
-        if [ "$CheckTmpNoexec" = "0" ]; then
-                #TmpNoexecWarn
-                warn "11" "NOT mounted with noexec"
-        elif [ "$CheckTmpNoexec" = "1" ]; then
-                OK "6"
-        else
-                CheckupErr
-        fi
+		echo -n "1.1.4a - Checking mounted $TMP for noexec "
+		if [ "$CheckTmpNoexec" = "0" ]; then
+				#TmpNoexecWarn
+				warn "11" "NOT mounted with noexec"
+		elif [ "$CheckTmpNoexec" = "1" ]; then
+				OK "6" 
+		else
+				CheckupErr
+		fi
 }
 
 TmpCheckFix() {
 
-        echo -n "1.1.2b - Checking mounted $TMP for nodev "
+		echo -n "1.1.2b - Checking mounted $TMP for nodev "
         if [ "$CheckTmpNodev" = "0" ]; then
                 warn "11" "NOT mounted with nodev"
                 FixTmpNodev
         elif [ "$CheckTmpNodev" = "1" ]; then
-                OK "6"
-        else
-                CheckupErr
+                OK "6" 
+		else
+				CheckupErr
         fi
 
-        echo -n "1.1.3b - Checking mounted $TMP for nosuid "
+		echo -n "1.1.3b - Checking mounted $TMP for nosuid "
         if [ "$CheckTmpNosuid" = "0" ]; then
                 #TmpNosuidWarn
-                warn "11" "NOT mounted with nosuid"
+				warn "11" "NOT mounted with nosuid"
                 FixTmpNosuid
         elif [ "$CheckTmpNosuid" = "1" ]; then
                 OK "5"
-        else
-            CheckupErr
+		else
+			CheckupErr
         fi
 
-        echo -n "1.1.4b - Checking mounted $TMP for noexec "
-        if [ "$CheckTmpNoexec" = "0" ]; then
-                #TmpNoexecWarn
-                warn "11" "NOT mounted with noexec"
-                FixTmpNoexec
-        elif [ "$CheckTmpNoexec" = "1" ]; then
-                OK "5"
-        else
-                CheckupErr
-        fi
+		echo -n "1.1.4b - Checking mounted $TMP for noexec "
+		if [ "$CheckTmpNoexec" = "0" ]; then
+				#TmpNoexecWarn
+				warn "11" "NOT mounted with noexec"
+				FixTmpNoexec
+		elif [ "$CheckTmpNoexec" = "1" ]; then
+				OK "5"
+		else
+				CheckupErr
+		fi
 }
 
 ################################################
@@ -371,6 +390,7 @@ grep "$TMP" $TMPF | sed "s/${replaceCol2}/${replaceCol2},nosuid/" >>$TMPF.nosuid
 #rm -rf $TMPF
 }
 
+
 FixFstabNoexec() {
 echo "Adding noexec parameter to fstab working file."
 replaceCol2=$(cat ${TMPF}.nosuid | grep "$TMP" | awk -F" " '{print $4}')
@@ -381,175 +401,178 @@ cp ${TMPF}.noexec ${TMPF}
 
 FstabTmpCheck() {
 
-    echo -n "1.1.1b - Checking $fstabName for $TMP "
+	echo -n "1.1.1b - Checking $fstabName for $TMP "
 if [ "$CheckTmpFstab" = "0" ]; then
-            #FstabNoTmpErr
-                    
-            err "6" " $TMP missing from $fstabName"
-            skipNotice "Skipping parameter checks for $TMP in $fstabName file."
+			#FstabNoTmpErr
+					
+			err "6" " $TMP missing from $fstabName"
+			skipNotice "Skipping parameter checks for $TMP in $fstabName file."
+
 
 elif [ "$CheckTmpFstab" = "1" ]; then
-            OK "6"
+			OK "6" 
 
-        echo -n "1.1.2b - Checking $fstabName for nodev on $TMP "
+		echo -n "1.1.2b - Checking $fstabName for nodev on $TMP "
         if [ "$CheckFstabNodev" = "0" ]; then
                 #FstabNodevWarn
-                warn "11" "nodev parameter missing from $fstabName"
+				warn "11" "nodev parameter missing from $fstabName"
         elif [ "$CheckFstabNodev" = "1" ]; then
                 OK "5"
-        else
-                CheckupErr
+		else
+				CheckupErr
         fi
 
-        echo -n "1.1.3b - Checking $fstabName for nosuid on $TMP "
+		echo -n "1.1.3b - Checking $fstabName for nosuid on $TMP "
         if [ "$CheckFstabNosuid" = "0" ]; then
-                warn "11" "nosuid parameter missing from $fstabName"
+				warn "11" "nosuid parameter missing from $fstabName"
         elif [ "$CheckFstabNosuid" = "1" ]; then
                 OK "5"
-        else
-                CheckupErr
+		else
+				CheckupErr
         fi
 
-        echo -n "1.1.4b - Checking $fstabName for noexec on $TMP "
-        if [ "$CheckFstabNoexec" = "0" ]; then
-                warn "11" "noexec parameter missing from $fstabName"
-        elif [ "$CheckFstabNoexec" = "1" ]; then
-                OK "5"
-        else
-                CheckupErr
-        fi
+		echo -n "1.1.4b - Checking $fstabName for noexec on $TMP "
+		if [ "$CheckFstabNoexec" = "0" ]; then
+				warn "11" "noexec parameter missing from $fstabName"
+		elif [ "$CheckFstabNoexec" = "1" ]; then
+				OK "5"
+		else
+				CheckupErr
+		fi
 
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 FstabTmpCheckFix() {
 
-    echo -n "1.1.1b - Checking $fstabName for $TMP "
-if [ "$CheckTmpFstab" = "0" ]; then                # /tmp doesn't exist in fstab file
+	echo -n "1.1.1b - Checking $fstabName for $TMP "
+if [ "$CheckTmpFstab" = "0" ]; then				# /tmp doesn't exist in fstab file
 
-            grep -v "$TMP" $FSTAB >>${TMPF}
-                        if [ "$CheckTmpMount" = "0" ]; then
-                                echo -e "\033[1;31mWARNING: Unable to update $fstabName because $TMP is NOT mounted on separate partition!  \033[m"
-                        elif [ "$CheckTmpMount" = "1" ]; then
-                            OK "6"
-                            echo "............ Updating fstab with the following line: "
+			grep -v "$TMP" $FSTAB >>${TMPF}
+						if [ "$CheckTmpMount" = "0" ]; then
+								echo -e "\033[1;31mWARNING: Unable to update $fstabName because $TMP is NOT mounted on separate partition!  \033[m"
+						elif [ "$CheckTmpMount" = "1" ]; then
+							OK "6"
+							echo "............ Updating fstab with the following line: "
 TMPMOUNTPOINT=$(mount | grep "/tmp" |grep -v "/var\|log\|bind" | awk -F" " '{print $1,$3,$5}')
-                            echo -e " $TMPMOUNTPOINT \t defaults \t 0 \t 2"
-                            echo -e " $TMPMOUNTPOINT \t defaults \t 0 \t 2" >>${TMPF}
-                        else
-                            CheckupErr
-                        fi
+							echo -e " $TMPMOUNTPOINT \t defaults \t 0 \t 2"
+							echo -e " $TMPMOUNTPOINT \t defaults \t 0 \t 2" >>${TMPF}
+						else
+							CheckupErr
+						fi
 
 elif [ "$CheckTmpFstab" = "1" ]  && [ "$CheckTmpMount" = "1" ];  then # /tmp exists in fstab file and is mounted on separate partition
-    OK "6"
-        echo -n "1.1.2b - Checking $fstabName for nodev on $TMP "
+	OK "6"
+		echo -n "1.1.2b - Checking $fstabName for nodev on $TMP "
         if [ "$CheckFstabNodev" = "0" ]; then
-                warn "11" "nodev parameter missing from $fstabName"
+				warn "11" "nodev parameter missing from $fstabName"
                 FixFstabNodev
         elif [ "$CheckFstabNodev" = "1" ]; then
                 OK "6"
-        else
-                CheckupErr
+		else
+				CheckupErr
         fi
 
-        echo -n "1.1.3b - Checking $fstabName for nosuid on $TMP "
+		echo -n "1.1.3b - Checking $fstabName for nosuid on $TMP "
         if [ "$CheckFstabNosuid" = "0" ]; then
-                warn "11" "nosuid parameter missing from $fstabName"
+				warn "11" "nosuid parameter missing from $fstabName"
                 FixFstabNosuid
         elif [ "$CheckFstabNosuid" = "1" ]; then
                 OK "5"
-        else
-                CheckupErr
+		else
+				CheckupErr
         fi
 
-        echo -n "1.1.4b - Checking $fstabName for noexec on $TMP "
-        if [ "$CheckFstabNoexec" = "0" ]; then
-                warn "11" "noexec parameter missing from $fstabName"
-                FixFstabNoexec
-        elif [ "$CheckFstabNoexec" = "1" ]; then
-                OK "3"
-        else
-                CheckupErr
-        fi
+		echo -n "1.1.4b - Checking $fstabName for noexec on $TMP "
+		if [ "$CheckFstabNoexec" = "0" ]; then
+				warn "11" "noexec parameter missing from $fstabName"
+				FixFstabNoexec
+		elif [ "$CheckFstabNoexec" = "1" ]; then
+				OK "3"
+		else
+				CheckupErr
+		fi
 
 elif [ "$CheckTmpFstab" = "1" ]  && [ "$CheckTmpMount" = "0" ];  then # /tmp exists in fstab file but is NOT mounted on separate partition
-    warn "11" " $TMP exists in $fstabName but is NOT mounted."
-    echo "............................................. Please fix that manually."
+	warn "11" " $TMP exists in $fstabName but is NOT mounted."
+	echo "............................................. Please fix that manually."
 
-else                                                                # elif "$CheckTmpFstab" = "1"
-    CheckupErr
+else																# elif "$CheckTmpFstab" = "1"
+	CheckupErr
 fi
 }
+
 
 CheckVar() {
 echo -n "1.1.5a - Checking if $VAR is on separate partition "
 if [ "$CheckVarMount" = "0" ]; then
-                            warn "11" "$VAR NOT MOUNTED ON SEPARATE PARTITION !!!"
-                            skipNoticeA "...............Change requires reboot."
-                            grep -v "$VAR" $FSTAB >>${TMPF}
-                            cat ${TMPF} | sort -u >> ${TMPF}.sorted
-                            mv ${TMPF}.sorted ${TMPF}
+							warn "11" "$VAR NOT MOUNTED ON SEPARATE PARTITION !!!"
+							skipNoticeA "...............Change requires reboot."
+							grep -v "$VAR" $FSTAB >>${TMPF}
+							cat ${TMPF} | sort -u >> ${TMPF}.sorted
+							mv ${TMPF}.sorted ${TMPF}
 elif [ "$CheckVarMount" = "1" ]; then
-                            OK "5"
+							OK "5"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 CheckVarFix() {
 echo -n "1.1.5a - Checking if $VAR is on separate partition "
 if [ "$CheckVarMount" = "0" ]; then
-                            warn "11" "$VAR NOT MOUNTED ON SEPARATE PARTITION !!!"
-                            skipNoticeA "...............Change requires reboot."
-                            echo " ............... Please mount $VAR partition manually !!"
-                            echo -e "............... \033[1;36mChange requires reboot. \033[m"
+							warn "11" "$VAR NOT MOUNTED ON SEPARATE PARTITION !!!"
+							skipNoticeA "...............Change requires reboot."
+							echo " ............... Please mount $VAR partition manually !!"
+							echo -e "............... \033[1;36mChange requires reboot. \033[m"
 elif [ "$CheckVarMount" = "1" ]; then
-                            OK "5"
+							OK "5"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
+
 
 FstabVarCheck() {
 echo -n "1.1.5b - Checking $fstabName for $VAR "
 if [ "$CheckVarFstab" = "0" ]; then
-    err "6" "$VAR missing from $fstabName"
+	err "6" "$VAR missing from $fstabName"
 elif [ "$CheckVarFstab" = "1" ]; then
-    OK "6"
+	OK "6" 
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 FstabVarCheckFix() {
 echo -n "1.1.5b - Checking $fstabName for $VAR "
 if [ "$CheckVarFstab" = "0" ]; then
-    err "6" "$VAR missing from $fstabName"
-            if [ "$CheckVarMount" = "0" ]; then
-                echo " ............... Unable to fix $fstabName file because $VAR is not mounted on separate partition."
-            else
-    echo -e "\033[1;31m ............... Adding the following line to temporary working file:\033[m"
+	err "6" "$VAR missing from $fstabName"
+			if [ "$CheckVarMount" = "0" ]; then
+				echo " ............... Unable to fix $fstabName file because $VAR is not mounted on separate partition."
+			else
+	echo -e "\033[1;31m ............... Adding the following line to temporary working file:\033[m"
 VARMOUNT=$(mount | grep $VAR | grep -v "bind\|log\|tmp" | awk -F" " '{print $1,$3,$5}')
-    echo -e "\033[1;36m ............... $VARMOUNT \t 0 \t 2 \033[m"
-    echo -e "$VARMOUNT \t 0 \t 2" >>${TMPF}
-            fi
+	echo -e "\033[1;36m ............... $VARMOUNT \t 0 \t 2 \033[m"
+	echo -e "$VARMOUNT \t 0 \t 2" >>${TMPF}
+			fi
 elif [ "$CheckVarFstab" = "1" ]; then
-    OK "6"
+	OK "6"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 CheckVarTmp() { # /var/tmp
 echo -n "1.1.6a - Checking if $VARTMP is binded to $TMP "
 if [ "$CheckVarTmpMount" = "0" ]; then
-                            warn "11"  " NOT binded to $TMP !!! "
+							warn "11"  " NOT binded to $TMP !!! "
 elif [ "$CheckVarTmpMount" = "1" ]; then
-                            OK "5"
+							OK "5"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
@@ -557,91 +580,94 @@ CheckVarTmpFix() {
 
 echo -n "1.1.6a - Checking if $VARTMP is binded with $TMP "
 if [ "$CheckVarTmpMount" = "0" ]; then
-                            warn "11"  " NOT binded to $TMP !!! "
-                            #check if /tmp is on separate partition, if yes then we can bind with it
-                                if [ "$CheckTmpMount" = "0" ]; then
-                                    echo " ................ Unable to bind $VARTMP with $TMP because $TMP is not on separate partition"
-                                elif [ "$CheckTmpMount" = "1" ]; then
-                            echo -e " ................. \033[1;36m Binding $VARTMP with $TMP \033[m"
-                            mount --bind $TMP $VARTMP
-                                else
-                                    CheckupErr
-                                fi
+							warn "11"  " NOT binded to $TMP !!! "
+							#check if /tmp is on separate partition, if yes then we can bind with it
+								if [ "$CheckTmpMount" = "0" ]; then
+									echo " ................ Unable to bind $VARTMP with $TMP because $TMP is not on separate partition"
+								elif [ "$CheckTmpMount" = "1" ]; then
+							echo -e " ................. \033[1;36m Binding $VARTMP with $TMP \033[m"
+							mount --bind $TMP $VARTMP
+								else
+									CheckupErr
+								fi
 elif [ "$CheckVarTmpMount" = "1" ]; then
-                            OK "5"
+							OK "5"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
+
+
 
 FstabVarTmpCheck() {
 echo -n "1.1.6b - Checking $fstabName for $VARTMP "
 if [ "$CheckVarTmpFstab" = "0" ]; then
-    warn "11"  "missing from $fstabName "
+	warn "11"  "missing from $fstabName "
 elif [ "$CheckVarTmpFstab" = "1" ]; then
-    OK "6"
+	OK "6"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
+
 
 FstabVarTmpCheckFix() {
 echo -n "1.1.6b - Checking $fstabName for $VARTMP "
 if [ "$CheckVarTmpFstab" = "0" ]; then
-    warn "11"  "missing from $fstabName "
-            # check if var/tmp is binded, if yes then add line to TMPF, if no then display error message
-            echo -n "1.1.6a - Checking if $VARTMP is binded to $TMP "
-                if [ "$CheckVarTmpMount" = "0" ]; then
-                            warn "11" "NOT binded to $TMP !!! "
-                elif [ "$CheckVarTmpMount" = "1" ]; then
-                            OK "3"
-                    echo -e " ............... Adding following line to $TMPF:"
-                    VARTMPMOUNT=$(mount | grep $VARTMP | awk -F" " '{print $1,$3}')
-                    echo -e "${VARTMPMOUNT} \t none \t none \t 0 \t 0 " >>${TMPF}
-                else
-                        CheckupErr
-                fi
+	warn "11"  "missing from $fstabName "
+			# check if var/tmp is binded, if yes then add line to TMPF, if no then display error message
+			echo -n "1.1.6a - Checking if $VARTMP is binded to $TMP "
+				if [ "$CheckVarTmpMount" = "0" ]; then
+							warn "11" "NOT binded to $TMP !!! "
+				elif [ "$CheckVarTmpMount" = "1" ]; then
+							OK "3"
+					echo -e " ............... Adding following line to $TMPF:"
+					VARTMPMOUNT=$(mount | grep $VARTMP | awk -F" " '{print $1,$3}')
+					echo -e "${VARTMPMOUNT} \t none \t none \t 0 \t 0 " >>${TMPF}
+				else
+						CheckupErr
+				fi
 elif [ "$CheckVarTmpFstab" = "1" ]; then
-    OK "6"
+	OK "6"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 CheckVarLog() { # /var/log
 echo -n "1.1.7b - Checking if $VARLOG is on separate partition "
 if [ "$CheckVarLogMount" = "0" ]; then
-    warn "11"  "$VARLOG NOT MOUNTED ON SEPARATE PARTITION !!!"
-    skipNoticeA "Change requires reboot."
+	warn "11"  "$VARLOG NOT MOUNTED ON SEPARATE PARTITION !!!"
+	skipNoticeA "Change requires reboot."
 elif [ "$CheckVarLogMount" = "1" ]; then
-    OK "5"
-    FstabVarlogCheck
+	OK "5"
+	FstabVarlogCheck
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 CheckVarLogFix() {
 echo -n "1.1.7b - Checking if $VARLOG is on separate partition "
 if [ "$CheckVarLogMount" = "0" ]; then
-    warn "11"  "$VARLOG NOT MOUNTED ON SEPARATE PARTITION !!!"
-    skipNoticeA "............... Please mount $VARLOG partition manually and add the following line to $fstabName:"
-    skipNoticeA "............... \033[1;36m <volume> \t $VARLOG \t ext3 \t <options>"
+	warn "11"  "$VARLOG NOT MOUNTED ON SEPARATE PARTITION !!!"
+	skipNoticeA "............... Please mount $VARLOG partition manually and add the following line to $fstabName:"
+	skipNoticeA "............... \033[1;36m <volume> \t $VARLOG \t ext3 \t <options>"
 elif [ "$CheckVarLogMount" = "1" ]; then
-    OK "5"
+	OK "5"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 FstabVarlogCheck() {
 echo -n "1.1.7a - Checking  $fstabName for $VARLOG "
 if [ "$CheckVarLogFstab" = "0" ]; then
-    err "5" "$VARLOG missing from $fstabName."
+	err "5" "$VARLOG missing from $fstabName."
 elif [ "$CheckVarLogFstab" = "1" ]; then
-    OK "5"
+	OK "5"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
@@ -650,179 +676,184 @@ echo -n "1.1.7a - Checking  $fstabName for $VARLOG "
 grep -v "$TMP" $FSTAB >>${TMPF}
 
 if [ "$CheckVarLogFstab" = "0" ]; then
-    err "5" "$VARLOG missing from $fstabName."
-            if [ "$CheckVarLogMount" = "1" ]; then
-    echo " ............... Adding following line to to temporary working file:"
+	err "5" "$VARLOG missing from $fstabName."
+			if [ "$CheckVarLogMount" = "1" ]; then
+	echo " ............... Adding following line to to temporary working file:"
 VARLOGMOUNT=$(mount | grep "$VARLOG" | grep -v "audit\|tmp\|bind" | awk -F" " '{print $1,$3,$5}')
-    echo -e " ............... $VARLOGMOUNT \t 0 \t 2"
-    echo -e "${VARLOGMOUNT} \t 0 \t 2 " >>${TMPF}
-    #cat ${TMPF}.noexec | sort -u >> ${TMPF}.noexec.sorted
-    #mv ${TMPF}.noexec.sorted ${TMPF}.noexec
+	echo -e " ............... $VARLOGMOUNT \t 0 \t 2"
+	echo -e "${VARLOGMOUNT} \t 0 \t 2 " >>${TMPF}
+	#cat ${TMPF}.noexec | sort -u >> ${TMPF}.noexec.sorted
+	#mv ${TMPF}.noexec.sorted ${TMPF}.noexec
 
-            elif [ "$CheckVarLogMount" = "0" ]; then
-                warn "11" "Unable to update $fstabName because $VARLOG is not mounted on separate partition."
-            else
-                CheckupErr
-            fi
+			elif [ "$CheckVarLogMount" = "0" ]; then
+				warn "11" "Unable to update $fstabName because $VARLOG is not mounted on separate partition."
+			else
+				CheckupErr
+			fi
 elif [ "$CheckVarLogFstab" = "1" ]; then
-        OK "5"
+		OK "5"
 else
-        CheckupErr
+		CheckupErr
 fi
 }
+
 
 FstabVarLogAuditCheck() { # /var/log/audit
 echo -n "1.1.8a - Checking  $fstabName for $VARLOGAUDIT "
 if [ "$CheckVarLogAuditFstab" = "0" ]; then
-    warn "11"  "$VARLOGAUDIT missing from $fstabName."
+	warn "11"  "$VARLOGAUDIT missing from $fstabName."
 elif [ "$CheckVarLogAuditFstab" = "1" ]; then
-    OK "5"
+	OK "5"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 FstabVarLogAuditCheckFix() {
 echo -n "1.1.8a - Checking  $fstabName for $VARLOGAUDIT "
 if [ "$CheckVarLogAuditFstab" = "0" ]; then
-    warn "11"  "$VARLOGAUDIT missing from $fstabName."
-            if [ "$CheckVarLogAuditMount" = "0" ]; then
-                echo -e "\033[1;31mWARNING: Unable to update $fstabName because $VARLOGAUDIT is NOT mounted on separate partition!  \033[m"
-            elif [ "$CheckVarLogAuditMount" = "1" ]; then
-                echo " ............... Adding following line to to temporary working file:"
+	warn "11"  "$VARLOGAUDIT missing from $fstabName."
+			if [ "$CheckVarLogAuditMount" = "0" ]; then
+				echo -e "\033[1;31mWARNING: Unable to update $fstabName because $VARLOGAUDIT is NOT mounted on separate partition!  \033[m"
+			elif [ "$CheckVarLogAuditMount" = "1" ]; then
+				echo " ............... Adding following line to to temporary working file:"
 VARLOGAUDITMOUNT=$(mount | grep "$VARLOGAUDIT"| awk -F" " '{print $1,$3,$5}')
-                echo -e " ............... $VARLOGAUDITMOUNT \t 0 \t 2"
-                echo -e "$VARLOGAUDITMOUNT \t 0 \t 2" >>${TMPF}
-            else
-                CheckupErr
-            fi
+				echo -e " ............... $VARLOGAUDITMOUNT \t 0 \t 2"
+				echo -e "$VARLOGAUDITMOUNT \t 0 \t 2" >>${TMPF}
+			else
+				CheckupErr
+			fi
 elif [ "$CheckVarLogAuditFstab" = "1" ]; then
-    OK "5"
+	OK "5"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 CheckVarLogAudit() {
 echo -n "1.1.8b - Checking if $VARLOGAUDIT is on separate partition "
 if [ "$CheckVarLogAuditMount" = "0" ]; then
-    warn "11" "WARNING: $VARLOGAUDIT NOT MOUNTED ON SEPARATE PARTITION"
+	warn "11" "WARNING: $VARLOGAUDIT NOT MOUNTED ON SEPARATE PARTITION"
 elif [ "$CheckVarLogAuditMount" = "1" ]; then
-    OK "4"
+	OK "4" 
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 CheckVarLogAuditFix() {
 echo -n "1.1.8b - Checking if $VARLOGAUDIT is on separate partition "
 if [ "$CheckVarLogAuditMount" = "0" ]; then
-    warn "11" "WARNING: $VARLOGAUDIT NOT MOUNTED ON SEPARATE PARTITION"
-    echo  -e "\033[1;36m................Change requires reboot. \033[m"
-    echo " ................ Please mount $VARLOGAUDIT partition manually and add the following line to $fstabName:"
-    echo -e " ............... \033[1;36m <volume> \t $VARLOGAUDIT \t ext3 \t <options> \033[m"
+	warn "11" "WARNING: $VARLOGAUDIT NOT MOUNTED ON SEPARATE PARTITION"
+	echo  -e "\033[1;36m................Change requires reboot. \033[m"
+	echo " ................ Please mount $VARLOGAUDIT partition manually and add the following line to $fstabName:"
+	echo -e " ............... \033[1;36m <volume> \t $VARLOGAUDIT \t ext3 \t <options> \033[m"
 elif [ "$CheckVarLogAuditMount" = "1" ]; then
-    OK "4"
+	OK "4"
 else
-    CheckupErr
+	CheckupErr
 fi
 }
+
 
 CheckHome() { # /home
 echo -n "1.1.9a - Checking if $HOME is on separate partition"
 if [ "$CheckHomeMount" = "0" ]; then
-    warn "11" "$HOME NOT MOUNTED ON SEPARATE PARTITION"
+	warn "11" "$HOME NOT MOUNTED ON SEPARATE PARTITION"
 elif [ "$CheckHomeMount" = "1" ]; then
-    OK "5"
+	OK "5" 
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 CheckHomeFix() {
 echo -n "1.1.9a - Checking if $HOME is on separate partition "
 if [ "$CheckHomeMount" = "0" ]; then
-    warn "11" "$HOME NOT MOUNTED ON SEPARATE PARTITION !"
-    echo -e ".................................... Please mount $HOME partition manually with nodev parameter"
-    echo -e ".................................... Please add new mount to $fstabName file."
+	warn "11" "$HOME NOT MOUNTED ON SEPARATE PARTITION !"
+	echo -e ".................................... Please mount $HOME partition manually with nodev parameter"
+	echo -e ".................................... Please add new mount to $fstabName file."
 elif [ "$CheckHomeMount" = "1" ]; then
-    OK "5"
+	OK "5" 
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 FstabHomeCheck() {
 echo -n "1.1.9b - Checking  $fstabName for $HOME "
 if [ "$CheckHomeFstab" = "0" ]; then
-    warn "11" "$HOME missing from $fstabName."
+	warn "11" "$HOME missing from $fstabName."
 elif [ "$CheckHomeFstab" = "1" ]; then
-    OK "6"
+	OK "6" 
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 FstabHomeFix() {
 echo -n "1.1.9b - Checking  $fstabName for $HOME "
 if [ "$CheckHomeFstab" = "0" ]; then
-    warn "11" "$HOME missing from $fstabName."
-            if [ "$CheckHomeMount" = "1" ]; then
+	warn "11" "$HOME missing from $fstabName."
+			if [ "$CheckHomeMount" = "1" ]; then
 HOMEMOUNTPOINT=$(mount | grep "/home" | awk -F" " '{print $1,$3,$5}')
-                skipNoticeA "Adding the following line to $fstabName"
-                echo -e " $HOMEMOUNTPOINT \t defaults \t 0 \t 2"
-                echo -e " $HOMEMOUNTPOINT \t defaults \t 0 \t 2" >>${TMPF}
-            elif [ "$CheckHomeMount" = "0" ]; then
-                err "3" "Unable to update $fstabName file because $HOME is not mounted on separate partition!"
-                echo -e ".............................. Please mount $HOME on new partition manually and then update $fstabName file."
-            else
-                CheckupErr
-            fi
+				skipNoticeA "Adding the following line to $fstabName"
+				echo -e " $HOMEMOUNTPOINT \t defaults \t 0 \t 2"
+				echo -e " $HOMEMOUNTPOINT \t defaults \t 0 \t 2" >>${TMPF}
+			elif [ "$CheckHomeMount" = "0" ]; then
+				err "3" "Unable to update $fstabName file because $HOME is not mounted on separate partition!"
+				echo -e ".............................. Please mount $HOME on new partition manually and then update $fstabName file."
+			else
+				CheckupErr
+			fi
 elif [ "$CheckHomeFstab" = "1" ]; then
-    OK "6"
+	OK "6" 
 else
-    CheckupErr
+	CheckupErr
 fi
 }
+
 
 checkHomeNodev() { # /home nodev check
 echo -n "1.1.10a - Checking mounted $HOME for nodev "
 if [ "$CheckHomeNodevMount" = "0" ]; then
-    warn "11" "NOT mounted with nodev"
+	warn "11" "NOT mounted with nodev"
 elif [ "$CheckHomeNodevMount" = "1" ]; then
-    OK "6"
+	OK "6" 
 else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 checkHomeNodevFix() {
 echo -n "1.1.10a - Checking mounted $HOME for nodev "
  if [ "$CheckHomeNodevMount" = "0" ]; then
-    warn "11" "NOT mounted with nodev"
-    echo -e "................... Remounting partition."
-    remountNodev ${HOME}
+	warn "11" "NOT mounted with nodev"
+	echo -e "................... Remounting partition."
+	remountNodev ${HOME}
  elif [ "$CheckHomeNodevMount" = "1" ]; then
-    OK "6"
+	OK "6" 
  else
-    CheckupErr
+	CheckupErr
 fi
 }
 
 fstabHomeNodevCheck() {
 echo -n "1.1.10 - Checking $fstabName for nodev on $HOME "
  if [ "$CheckHomeNodevFstab" = "0" ]; then
-    warn "11" "parameter missing."
+	warn "11" "parameter missing."
  elif [ "$CheckHomeNodevFstab" = "1" ]; then
-    OK "5"
+	OK "5"
  else
-    CheckupErr
+	CheckupErr
  fi
 }
 
 fstabHomeNodevFix() {
 echo "nothing yet" >> /dev/null
 }
+
+
 
 # nodev on Removable Media
 # Assume that all removable media are mounted on /media/...
@@ -841,6 +872,7 @@ echo -n "1.1.11a - Checking $i (removable media) for nodev  "
         fi
 done
 }
+
 
 CheckNodevRemMediaMountFix() {
 echo "nothing yet" >>/dev/null
@@ -873,6 +905,8 @@ CheckNodevRemMediaFstabFix() {
 echo "nothing yet" >>/dev/null
 }
 
+
+
 # noexec on Removable Media
 # Assume that all removable media are mounted on /media/...
 CheckNoexecRemMediaMount() {
@@ -893,6 +927,7 @@ echo -n "1.1.12a - Checking $i (removable media) for noexec  "
 CheckNoexecRemMediaMountfix() {
 echo "nothing yet" >>/dev/null
 }
+
 
 CheckNoexecRemMediaFstab() {
  for i in ${RemovableMediaFstab}
@@ -916,9 +951,11 @@ RemovableMediaNoexecFstabCheck=$( grep "${i}" $FSTAB | grep "noexec" | wc -l)
   done
 }
 
+
 CheckNoexecRemMediaFstabFix() {
 echo "nothing yet" >>/dev/null
 }
+
 
 # nosuid on Removable Media
 # Assume that all removable media are mounted on /media/...
@@ -940,6 +977,7 @@ done
 CheckNosuidRemMediaMountFix() {
     echo "nothing yet" >>/dev/null
 }
+
 
 CheckNosuidRemMediaFstab() {
  for i in ${RemovableMediaFstab}
@@ -968,6 +1006,7 @@ CheckNosuidRemMediaFstabFix() {
     echo "nothing yet" >>/dev/null
 }
 
+
 CheckMountedMediaInFstab() {
  for i in ${RemovableMedia}
    do
@@ -986,7 +1025,7 @@ CheckRemovableMediaMount() {
 echo -n "1.1.11aa - Checking for attached removable devices "
 if [ "$RemovableMediaCount" = "0" ]; then
      warn "11"  "no removable devices mounted on the system."
-     Notice2 "1" "NOTICE: Skipping parameter checks for removable mount point."
+	 Notice2 "1" "NOTICE: Skipping parameter checks for removable mount point."
 else
         CheckMountedMediaInFstab
         CheckNodevRemMediaMount
@@ -995,19 +1034,21 @@ else
 fi
 }
 
+
+
 CheckRemovableMediaFstab() {
 echo -n "1.1.11ab - Checking for removable devices in fstab file"
 if [ "$RemovableMediaFstabCount" = "0" ]; then
         warn "11"  "no removable media found"
         #skipMountCheck "removable media in fstab file"
-        Notice2 "1" "Skipping parameter checks for removable media in fstab file mount point."
+		Notice2 "1" "Skipping parameter checks for removable media in fstab file mount point."
 else
     for i in ${RemovableMediaFstab}
      do
 RemovableMediaFromFstabMountedCount=$( mount | grep -i "$i" | awk -F" " '{print $3}' | wc -l)
         if [ "$RemovableMediaFromFstabMountedCount" = "0" ]; then
             warn "11"  "NOT mounted but exists in $fstabName."
-            Notice2 "1" "NOTICE: Skipping parameter checks for removable media in fstab file mount point."
+			Notice2 "1" "NOTICE: Skipping parameter checks for removable media in fstab file mount point."
         elif [ "$RemovableMediaFromFstabMountedCount" = "1" ]; then
             CheckNodevRemMediaFstab
             CheckNoexecRemMediaFstab
@@ -1019,11 +1060,14 @@ RemovableMediaFromFstabMountedCount=$( mount | grep -i "$i" | awk -F" " '{print 
 fi
 }
 
+
 RemMediaMsg() {
-    echo -e "\033[1;36m Please note that you may have other removable media that is not detected by this script. \033[m"
+	echo -e "\033[1;36m Please note that you may have other removable media that is not detected by this script. \033[m"
     echo -e "\033[1;36m Please check these devices manually for nosuid,noexec or nodev parameters with this command: \033[m"
     echo -e "\033[1;36m sudo mount | grep <media_mount_point> \n \033[m"
 }
+
+
 
 # check nodev on /dev/shm
 ##
@@ -1038,6 +1082,7 @@ echo -n "1.1.14a - Checking $mpoint for nodev"
             CheckupErr "with check if $i is mounted with nodev"
         fi
 }
+
 
 CheckNodevShmMountFix() {
     echo "nothing yet" >>/dev/null
@@ -1063,9 +1108,12 @@ else
 fi
 }
 
+
 CheckNodevShmFstabFix() {
 echo "nothing yet" >>/dev/null
 }
+
+
 
 # Nosuid on /dev/shm
 ##
@@ -1082,6 +1130,7 @@ echo -n "1.1.15a - Checking $mpoint for nosuid  "
             CheckupErr "with check if $i is mounted with nosuid"
         fi
 }
+
 
 CheckNosuidShmMountFix() {
     echo "nothing yet" >>/dev/null
@@ -1107,9 +1156,12 @@ else
 fi
 }
 
+
 CheckNosuidShmFstabFix() {
 echo "nothing yet" >>/dev/null
 }
+
+
 
 # Noexec on /dev/shm
 ##
@@ -1126,6 +1178,7 @@ echo -n "1.1.16a - Checking $mpoint for noexec  "
             CheckupErr "with check if $i is mounted with noexec"
         fi
 }
+
 
 CheckNoexecShmMountFix() {
     echo "nothing yet" >>/dev/null
@@ -1151,9 +1204,11 @@ else
 fi
 }
 
+
 CheckNoexecShmFstabFix() {
 echo "nothing yet" >>/dev/null
 }
+
 
 # sticky bit on all world writable directories
 ##
@@ -1163,7 +1218,7 @@ listDirectories=$(find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2>/de
 
 echo -n "1.1.17 - Checking  sticky bits for world writable directories "
 if [ "$DirectoriesCount" = "0" ]; then
-    OK "4"
+    OK "4" 
 elif [ "$DirectoriesCount" -gt "0" ]; then
     warn "11"  "There are directories with missing sticky bit:"
     for i in $listDirectories
@@ -1178,6 +1233,7 @@ fi
 CheckStickyBitsFix() {
 echo "nothing yet" >>/dev/null
 }
+
 
 # check OS release
 ##
@@ -1194,23 +1250,26 @@ echo -n "1.2    - Checking  Operating System Release "
  fi
 }
 
+
 # enable gpgcheck globally
 ##
 GPGcheck() {
 gpg=$(sudo grep -i "gpgcheck" /etc/yum.conf | awk -F"=" '{print $2}')
 echo -n "1.3.3 - Checking  if gpgcheck is enabled globally "
 if [ "$gpg" = "0" ]; then
-    err "5" "NOT enabled"
+	err "5" "NOT enabled"
 elif [ "$gpg" = "1" ]; then
-    OK "5"
+	OK "5"
 else
-    CheckupErr "with check against yum.conf"
+	CheckupErr "with check against yum.conf"
 fi
 }
 
 GPGcheckFix() {
 echo "nothinh yet" >/dev/null
 }
+
+
 
 # disable yum-updatesd
 #
@@ -1219,7 +1278,7 @@ echo -n "1.3.5 - Checking  if yum-updatesd is disabled "
 checkYumInstalled=$(rpm -qa yum-updatesd | wc -l)
 
 if [ "$checkYumInstalled" = "0" ]; then
-        Notice "6" "OK - package NOT installed."
+		Notice "6" "OK - package NOT installed."
 elif [ "$checkYumInstalled" = "1" ]; then
 checkYum=$(/sbin/chkconfig --list yum-updatesd | grep -i "on" | wc -l )
         if [ "$checkYum" = "0" ]; then
@@ -1238,6 +1297,8 @@ checkYumUpdatesdFix() {
 echo "nothing yet" >/dev/null
 }
 
+
+
 # Obtain software updates
 ##
 checkUpdates() {
@@ -1247,15 +1308,16 @@ countUpdates=$(/usr/bin/yum --security check-update 2>&1 | grep '^There are ' | 
 Updates=$(/usr/bin/yum --security check-update 2>&1 | grep '^There are ' | awk -F"out of " '{print $2}' | awk -F" " '{print $1}')
 none="0"
 if [ "$countUpdates" = "0" ]; then
-    Notice "7" "System is up to date."
+	Notice "7" "System is up to date."
 elif [ "$countUpdates" = "1" ]; then
     echo -e "\033[1;36m We have `echo "${Updates}"` updates available. \033[m"
     echo ".................................. run this command to update system: yum update."
 else
 
-    CheckupErr "with counting available updates"
+	CheckupErr "with counting available updates"
 fi
 }
+
 
 # Verify Package Integrity using rpm
 VerifyPackageIntegrity() {
@@ -1263,13 +1325,13 @@ echo -n "1.3.7 - Checking packages integrity & count for manual audit"
 countBadPackages=$(rpm -qVa 2>&1 >&- | grep "^prelink" | wc -l)
 
 if [ "$countBadPackages" -gt "0" ]; then
-    warn "11" "There are $countBadPackages files in need of manual attention."
-    echo "........................... Please run this command to investigate them:"
-    echo -e "........................... sudo rpm -qVa | awk '\$2 != \"c\" { print \$0}' "
+	warn "11" "There are $countBadPackages files in need of manual attention."
+	echo "........................... Please run this command to investigate them:"
+	echo -e "........................... sudo rpm -qVa | awk '\$2 != \"c\" { print \$0}' "
 elif [ "$countBadPackages" = "0" ]; then
-    OK "4"
+	OK "4" 
 else
-    CheckupErr "something went wrong with verifying packages."
+	CheckupErr "something went wrong with verifying packages."
 fi
 }
 
@@ -1277,15 +1339,18 @@ VerifyPackageIntegrityFix() {
 echo "nothing yet" >/dev/null
 }
 
+
+
+
 checkAIDEcrontab() {
 echo -n "1.4.2 - Checking AIDE schedule "
 AIDEcrontab=$(crontab -u root -l  2>/dev/null| grep -i aide | wc -l)
  if [ "$AIDEcrontab" == "0" ]; then
-    err "8" "AIDE not scheduled."
+	err "8" "AIDE not scheduled."
  elif [ "$AIDEcrontab" == "1" ]; then
-    OK "8"
+	OK "8" 
  else
-    CheckupErr "something went wrong."
+	CheckupErr "something went wrong."
  fi
 }
 
@@ -1293,22 +1358,24 @@ checkAIDEcrontabfix() {
 echo "nothing yet" >>/dev/null
 }
 
+
 checkAIDEinstalled() {
 echo -n "1.4.1 - Checking if AIDE is installed "
 AIDEcount=$(rpm -qa aide | wc -l)
  if [ "$AIDEcount" = "0" ]; then
-    err "7" "AIDE NOT installed"
+	err "7" "AIDE NOT installed"
  elif [ "$AIDEcount" = "1" ]; then
-    OK "7"
-    checkAIDEcrontab
+	OK "7" 
+	checkAIDEcrontab
  else
-    CheckupErr "something went wrong with checking if AIDE is installed."
+	CheckupErr "something went wrong with checking if AIDE is installed."
  fi
 }
 
 checkAIDEinstalledFix() {
 echo "nothing yet" >/dev/null
 }
+
 
 ##
 # Secure boot settings:
@@ -1325,46 +1392,48 @@ Notice "5" "$grub is a symlink"
 echo -n "1.6.1a - Checking if root owns $grub symlink source "
 grubsource=$(ls -lrh $grub | awk -F"->" '{print $2}' | sed 's/^...//' )
 symlinkPermissionCheck=$(stat -c "%u %g" $grubsource | egrep "0 0" | wc -l)
-        if [ "$symlinkPermissionCheck" = "1" ]; then
-            OK "4"
-        elif [ "$symlinkPermissionCheck" = "0" ]; then
-            warn "11" "NOT owned by root!"
-        else
-            CheckupErr "something went wrong."
-        fi
-    echo -n "1.6.2  - Checking grub symlink source permissions "
-    #grubsourcePermissions=$(stat -c "%a" $grubsource |  egrep ".00" )
-    grubsourcePermissions=$(stat -c "%a" $grubsource )
-        if [ "$grubsourcePermissions" = "600" ]; then
-            OK "5"
-        elif [ "$grubsourcePermissions" -gt "600" ]; then
-            warn "11" "$grubsourcePermissions - please change it to 600"
-        else
-            err "5" "something went wrong with check on $grubsource"
-        fi
+		if [ "$symlinkPermissionCheck" = "1" ]; then
+			OK "4"
+		elif [ "$symlinkPermissionCheck" = "0" ]; then
+			warn "11" "NOT owned by root!"
+		else
+			CheckupErr "something went wrong."
+		fi
+	echo -n "1.6.2  - Checking grub symlink source permissions "
+	#grubsourcePermissions=$(stat -c "%a" $grubsource |  egrep ".00" )
+	grubsourcePermissions=$(stat -c "%a" $grubsource )
+		if [ "$grubsourcePermissions" = "600" ]; then
+			OK "5"
+		elif [ "$grubsourcePermissions" -gt "600" ]; then
+			warn "11" "$grubsourcePermissions - please change it to 600"
+		else
+			err "5" "something went wrong with check on $grubsource"
+		fi
+
 
 elif [ "$grubSymlink" = "0" ]; then
 grubOwnerStat=$(stat -c "%u %g" $grub | egrep "0 0" | wc -l)
-    if [ "$grubOwnerStat" = "1" ]; then
-            OK "3"
-    elif [ "$grubOwnerStat" = "0" ]; then
-            warn "11" "NOT owned by root!"
-    else
-            CheckupErr "something went wrong with checking ownership of $grub file."
-    fi
+	if [ "$grubOwnerStat" = "1" ]; then
+			OK "3"
+	elif [ "$grubOwnerStat" = "0" ]; then
+			warn "11" "NOT owned by root!"
+	else
+			CheckupErr "something went wrong with checking ownership of $grub file."
+	fi
 echo -n "1.6.2  - Checking grub symlink source permissions "
-    grubPermissions=$(stat -c "%a" $grub )
-        if [ "$grubPermissions" = "600" ]; then
-            OK "3"
-        elif [ "$grubPermissions" -gt "600" ]; then
-            warn "11" "$grubPermissions - please change it to 600"
-        else
-            err "3" "something went wrong with check on $grub"
-        fi
+	grubPermissions=$(stat -c "%a" $grub )
+		if [ "$grubPermissions" = "600" ]; then
+			OK "3"
+		elif [ "$grubPermissions" -gt "600" ]; then
+			warn "11" "$grubPermissions - please change it to 600"
+		else
+			err "3" "something went wrong with check on $grub"
+		fi
 else
-    CheckupErr "with checking if $grub is a symlink"
+	CheckupErr "with checking if $grub is a symlink"
 fi
 }
+
 
 ##
 # Secure boot settings:
@@ -1380,6 +1449,7 @@ checkPass=$(grep "^password" ${GRUB} | wc -l)
     CheckupErr
  fi
 }
+
 
 ##
 # Authentication for single user mode:
@@ -1409,6 +1479,7 @@ else
 fi
 }
 
+
 ##
 # Disable interactive boot:
 #
@@ -1425,6 +1496,7 @@ prompt=$(grep "^PROMPT" $init |awk -F"=" '{print $2}')
  fi
 }
 
+
 ##
 # Additional Process Hardening:
 #
@@ -1436,29 +1508,32 @@ checkCoreDumpsLimits() {
 echo -n "1.7.1a - Checking if hard limit is set on core dumps "
 hardcheck=$(grep "hardcore" $limitsfile | egrep -v "^#" |wc -l)
  if [ "$hardcheck" = "0" ]; then
-    err "5" "NOT SET"
+	err "5" "NOT SET"
  elif [ "$hardcheck" = "1" ]; then
-    OK "5"
+	OK "5"
  else
-    CheckupErr
+	CheckupErr
  fi
 }
+
 
 checkProgramCoreLimits() {
 echo -n "1.7.1b - Checking if setuid programs can dump core "
 programCheck=$(grep -i "dumpable" /etc/sysctl.conf |egrep -v "^#"| wc -l)
  if [ "$programCheck" = "0" ]; then
-    err "5" "NOT SET"
+	err "5" "NOT SET"
  elif [ "$programCheck" = "1" ]; then
-    OK "5"
+	OK "5"
  else
-    CheckupErr
+	CheckupErr
  fi
 }
 
 checkCoreDumpsLimits
 checkProgramCoreLimits
 }
+
+
 
 ##
 # Disable interactive boot:
@@ -1468,15 +1543,16 @@ echo -n "1.7.2 - Checking if buffer overflow protection is enabled "
 showShield=$(sysctl kernel.exec-shield 2>&1| awk -F"= " '{print $2}')
 checkShield=$(sysctl kernel.exec-shield 2>&1  | grep "error:" | awk -F":" '{print $1}')
  if [ "$checkShield" = "error" ]; then
-    err "4" "kernel parameter missing"
+	err "4" "kernel parameter missing"
  else
-    if [ "$showShield" = "1" ]; then
-        OK "4"
-    else
-        err "4" "NOT ENABLED"
-    fi
+	if [ "$showShield" = "1" ]; then
+		OK "4"
+	else
+		err "4" "NOT ENABLED"
+	fi
  fi
 }
+
 
 #
 # Enable randomized virtual memory region placement:
@@ -1486,15 +1562,16 @@ checkRandomizedVAspace() {
 echo -n "1.7.3 - Checking if protection against writing memory page exploits is enabled "
 checkKernelParameter=$(sysctl kernel.randomize_va_space | awk -F"= " '{print $2}')
  if [ "$checkKernelParameter" = "2" ]; then
-    OK "2"
+	OK "2"
  elif [ "$checkKernelParameter" = "1" ]; then
-    OK "2"
- elif [ "$checkKernelParameter" = "0" ]; then    
-    warn "11" "DISABLED"
+	OK "2"
+ elif [ "$checkKernelParameter" = "0" ]; then	
+	warn "11" "DISABLED"
  else
-    CheckupErr
+	CheckupErr
  fi
 }
+
 
 #
 # Enable XD/NX support:
@@ -1509,34 +1586,35 @@ checkPAEinstall=$(rpm -qa | grep -i "pae" | wc -l)
 checkPAE() {
 echo -n "1.7.4b - Checking if PAE kernel is installed on the system  "
  if [ "$checkPAEinstall" = "0" ]; then
-    warn "11" "not INSTALLED"
+	warn "11" "not INSTALLED"
  else
-    OK "4"
-    echo -n "1.7.4c - Checking if PAE kernel is used on running system  "
-        if [ "$checkKernelPAE" = "0" ]; then
-            warn "11" "Not USED"
-        elif [ "$checkKernelPAE" = "1" ]; then
-            OK "4"
-        else
-            CheckupErr
-        fi
+	OK "4"
+	echo -n "1.7.4c - Checking if PAE kernel is used on running system  "
+		if [ "$checkKernelPAE" = "0" ]; then
+			warn "11" "Not USED"
+		elif [ "$checkKernelPAE" = "1" ]; then
+			OK "4"
+		else
+			CheckupErr
+		fi
  fi
 }
 
 echo -n "1.7.4a - Checking if NX No Execute & PAE is supported by CPU "
 if [ "$checkCPUpae" = "1" ] && [ "$checkCPUnx" = "1" ]; then
-    OK "4"
-    checkPAE
+	OK "4"
+	checkPAE
 elif [ "$checkCPUpae" = "1" ] && [ "$checkCPUnx" = "0" ]; then
-    warn "11" "PAE supported by CPU but NX is not"
-        checkPAE
+	warn "11" "PAE supported by CPU but NX is not"
+		checkPAE
 elif [ "$checkCPUpae" = "0" ] && [ "$checkCPUnx" = "1" ]; then
-    warn "11" "PAE NOT supported by CPU but NX is"
-        checkPAE
+	warn "11" "PAE NOT supported by CPU but NX is"
+		checkPAE
 elif [ "$checkCPUpae" = "0" ] && [ "$checkCPUnx" = "0" ]; then
-    err "4" "PAE & NX NOT supported by this CPU"
+	err "4" "PAE & NX NOT supported by this CPU"
 fi
 }
+
 
 #
 # Check if prelink is disabled:
@@ -1545,20 +1623,20 @@ checkPrelink() {
 IsPrelinkInstalled=$(rpm -qa | grep -i "prelink" | wc -l)
 echo -n "1.7.5a - Checking if Prelink is installed on the system "
 if [ "$IsPrelinkInstalled" = "0" ]; then
-    Notice "4" "Not Installed"
+	Notice "4" "Not Installed"
 elif [ "$IsPrelinkInstalled" = "1" ]; then
 IsPrelinkEnabled=$(grep "PRELINKING" /etc/sysconfig/prelink  | awk -F"=" '{print $2}' )
-    OK "4"
-    echo -n "1.7.5b - Checking if Prelink is enabled "
-     if [ "$IsPrelinkEnabled" = "yes" ]; then
-        warn "11" "ENABLED"
-     elif [ "$IsPrelinkEnabled" = "no" ]; then
-        OK "4"
-     else
-        CheckupErr "with check if prelink is enabled"
-     fi
+	OK "4"
+	echo -n "1.7.5b - Checking if Prelink is enabled "
+	 if [ "$IsPrelinkEnabled" = "yes" ]; then
+		warn "11" "ENABLED"
+	 elif [ "$IsPrelinkEnabled" = "no" ]; then
+		OK "4"
+	 else
+		CheckupErr "with check if prelink is enabled"
+	 fi
 else
-    CheckupErr " with check if prelink is installed"
+	CheckupErr " with check if prelink is installed"
 fi
 }
 
@@ -1611,6 +1689,7 @@ echo -n "2.1.${COUNTER}a - Checking if ${service} server is NOT installed "
                 fi
 }
 
+
 COUNTER=$((COUNTER+1))
 isEvenNo=$( expr $COUNTER % 2 )
  if [ $isEvenNo -ne 0 ]
@@ -1623,6 +1702,7 @@ checkDeamonService  ${i} ${c}
  done
 }
 
+
 #
 # Check xinetd
 #
@@ -1630,13 +1710,14 @@ checkXinetdService() {
 IsXinetdInstalled=$(rpm -qa | grep -i "xinetd" | wc -l)
 echo -n "2.1.11 - Checking if xinetd is NOT installed "
  if [ "$IsXinetdInstalled" = "1" ]; then
-    warn "11" "INSTALLED"
+	warn "11" "INSTALLED"
  elif [ "$IsXinetdInstalled" = "0" ]; then
-    OK "6"
+	OK "6"
  else
-    CheckupErr
+	CheckupErr
  fi
 }
+
 
 ##
 ## Check stream-dgram services:
@@ -1685,6 +1766,7 @@ checkService ${i} ${b}
  done
 }
 
+
 #
 # Check tcpmux-server
 #
@@ -1709,6 +1791,7 @@ else
  CheckupErr
 fi
 }
+
 
 #
 # Check umask
@@ -1759,6 +1842,7 @@ XwindowInstalled=$(yum grouplist "X Window System" 2>&1 | grep "Done" -B 1 | gre
  fi
 }
 
+
 #
 # Secure avahi service if enabled
 #
@@ -1770,15 +1854,16 @@ Protocol2=$(grep "use-ipv6" /etc/avahi/avahi-daemon.conf | awk -F"=" '{print $2}
  if [ "$Protocol1" = "yes" ] && [ "$Protocol1" = "$Protocol2" ]; then
         warn "11" "both are enabled"
  elif [ "${Protocol1}" == "no" ] && [ "${Protocol1}" == "${Protocol2}" ]; then
-        Notice "4" "- both protocols are disabled"                    # fix this line
+        Notice "4" "- both protocols are disabled"					# fix this line
  elif [ "${Protocol1}" == "yes" ] && [ "${Protocol1}" != "${Protocol2}" ]; then
-        Notice "4" " - enabled on ipv4"                            # fix this line
+        Notice "4" " - enabled on ipv4"							# fix this line
  elif [ "${Protocol2}" == "yes" ] && [ "${Protocol2}" != "${Protocol1}" ]; then
-        Notice "4" " - enabled on ipv6"                            # fix this line
+        Notice "4" " - enabled on ipv6"							# fix this line
  else
         CheckupErr
  fi
 }
+
 
 #
 # Check Avahi parameters
@@ -1853,7 +1938,7 @@ echo -n "3.3.5.${COUNTER2} Checking value of ${ParameterName} "
                   if [ "$ParameterValue" = "yes" ]; then
                         warn "11" "$ParameterName is set to YES"
                   elif [ "$ParameterValue" = "no" ]; then
-                        OK "6" "OK - set correctly."
+						OK "6" "OK - set correctly."
                   else
                         CheckupErr "with check for values of enabled pars where we have enabled and commented out."
                   fi
@@ -1880,6 +1965,8 @@ echo -n "3.3.5.${COUNTER2} Checking value of ${ParameterName} "
 done
 }
 
+
+
 #
 # Check Avahi
 #
@@ -1889,14 +1976,16 @@ IsAvahiEnabled=$(chkconfig --list | grep -i avahi| sed -e 's/\s\+/\n/g' | grep "
  if [ "$IsAvahiEnabled" -gt "0" ]; then
         AvahiEnabled=$(chkconfig --list | grep -i avahi| sed -e 's/\s\+/\n/g' | grep "on" | grep -v "avahi" | awk -F":" '{print $1}' | sed -e ':a;N;$!ba;s/\n/ /g')
         warn "11" "Enabled on these runlevels: ${AvahiEnabled}."
-        checkAvahiProtocols
-        AvahiParameterChecks
+		checkAvahiProtocols
+		AvahiParameterChecks
  elif [ "$IsAvahiEnabled" = "0" ]; then
         OK "7"
  else
         CheckupErr
  fi
 }
+
+
 
 #
 # Check CUPS
@@ -1912,6 +2001,7 @@ echo -n "3.4 - Checking if CUPS server is NOT enabled  "
         CheckupErr
  fi
 }
+
 
 #
 # Check DHCP
@@ -2006,6 +2096,7 @@ else
 fi
 }
 
+
 #
 # Check NFS/RPC service
 #
@@ -2028,6 +2119,7 @@ checkLevels=$(chkconfig --list | grep "${item}" | sed -e 's/\s\+/\n/g' | grep "o
   fi
 done
 }
+
 
 #
 # Check BIND & VSFTPD
@@ -2059,6 +2151,7 @@ else
 fi
  done
 }
+
 
 #
 # Check dovecot, samba, net-snmp
@@ -2130,6 +2223,7 @@ else
 fi
 }
 
+
 #
 # Check Host Only Network Parameters
 #
@@ -2140,40 +2234,40 @@ COUNTERC="0"
   do
 COUNTER=$((COUNTERC+1))
 parameter="Forwarding"
-    if [ "$t" = "net.ipv4.ip_forward" ]; then
+	if [ "$t" = "net.ipv4.ip_forward" ]; then
      parameter="Forwarding"
-     echo -n "4.1.${COUNTER} Checking if ${parameter} is DISABLED"
+	 echo -n "4.1.${COUNTER} Checking if ${parameter} is DISABLED"
 IsForwardingDisabled=$(/sbin/sysctl ${t} | awk -F"= " '{print $2}')
-        if [ "$IsForwardingDisabled" = "0" ]; then
-            OK "6"
-        elif [ "$IsForwardingDisabled" != "0" ]; then
-            err "6" "ENABLED"
-        else
-            CheckupErr
-        fi
-    elif [ "$t" = "net.ipv4.conf.all.send_redirects" ]; then
+		if [ "$IsForwardingDisabled" = "0" ]; then
+			OK "6"
+		elif [ "$IsForwardingDisabled" != "0" ]; then
+			err "6" "ENABLED"
+		else
+			CheckupErr
+		fi 
+	elif [ "$t" = "net.ipv4.conf.all.send_redirects" ]; then
      parameter="All Send Packet Redirects"
-     echo -n "4.1.${COUNTER}.a Checking if ${parameter} is DISABLED"
+	 echo -n "4.1.${COUNTER}.a Checking if ${parameter} is DISABLED" 
 IsForwardingDisabled=$(/sbin/sysctl ${t} | awk -F"= " '{print $2}')
-        if [ "$IsForwardingDisabled" = "0" ]; then
-            OK "4"
-        elif [ "$IsForwardingDisabled" != "0" ]; then
-            err "4" "ENABLED"
-        else
-            CheckupErr
-        fi
-    elif [ "$t" = "net.ipv4.conf.default.send_redirects" ]; then
+		if [ "$IsForwardingDisabled" = "0" ]; then
+			OK "4"
+		elif [ "$IsForwardingDisabled" != "0" ]; then
+			err "4" "ENABLED"
+		else
+			CheckupErr
+		fi
+	elif [ "$t" = "net.ipv4.conf.default.send_redirects" ]; then
      parameter="Default Send Packet Redirects"
-     echo -n "4.1.2.b Checking if ${parameter} is DISABLED"
+	 echo -n "4.1.2.b Checking if ${parameter} is DISABLED"
 IsForwardingDisabled=$(/sbin/sysctl ${t} | awk -F"= " '{print $2}')
-        if [ "$IsForwardingDisabled" = "0" ]; then
-            OK "4"
-        elif [ "$IsForwardingDisabled" != "0" ]; then
-            err "4" "ENABLED"
-        else
-            CheckupErr
-        fi
-    fi    
+		if [ "$IsForwardingDisabled" = "0" ]; then
+			OK "4"
+		elif [ "$IsForwardingDisabled" != "0" ]; then
+			err "4" "ENABLED"
+		else
+			CheckupErr
+		fi
+	fi	
   done
 }
 
@@ -2215,6 +2309,7 @@ tab="$1"
      CheckupErr
         fi
 }
+
 
 parameter="Routing"
         if [ "$t" = "${ALL}.accept_source_route" ]; then
@@ -2259,7 +2354,7 @@ IsParameterEnabled "4"
 COUNTERAA=$((COUNTERAA+1)) # -- 4.2.5
      parameter="ALL ICMP echo & timestamp requests to Broadcast & Multicast addresses"
          echo -n "4.2.${COUNTERAA} Checking if ${parameter} are IGNORED"
-IsParameterEnabled "1"
+IsParameterEnabled "1" 
         elif [ "$t" = "${IPV}.icmp_ignore_bogus_error_responses" ]; then
 COUNTERAA=$((COUNTERAA+1)) # -- 4.2.6
      parameter="Bad Error Message Protection"
@@ -2287,6 +2382,7 @@ IsParameterEnabled "6"
   done
 }
 
+
 checkTcpWrappers() {
 echo -n "4.5 - Checking if TCP Wrappers are installed "
 AreTcpWrappersInstalled=$(rpm -qa | grep "tcp_wrappers-[0-9]" | wc -l)
@@ -2298,6 +2394,7 @@ else
         CheckupErr
 fi
 }
+
 
 checkHostAllowDeny() {
 
@@ -2358,13 +2455,15 @@ done
 hostsConfigExists
 }
 
+
+
 checkIPtables() {
 IsIPtablesSetup=$(chkconfig --list iptables | wc -l)
 IPtablesLevels=$(chkconfig --list iptables | sed -e 's/\s\+/\n/g' | grep "on" | awk -F":" '{print $1}' | sed -e ':a;N;$!ba;s/\n/ /g')
 
 echo -n "4.6.1 Checking if iptables is configured "
 if [ "${IsIPtablesSetup}" -gt "0" ]; then
-        Notice "6" "OK - ENABLED on these runlevels: ${IPtablesLevels}"
+		Notice "6" "OK - ENABLED on these runlevels: ${IPtablesLevels}"
 echo -n "4.6.2 Checking if iptables is currently running "
 IsDeamonRunning=$(service iptables status | head -1 | awk -F":" '{print $2}')
 IsDeamonRunning2=$(service iptables status | head -1 | awk -F":" '{print $1}')
@@ -2372,8 +2471,8 @@ IsDeamonRunning2=$(service iptables status | head -1 | awk -F":" '{print $1}')
                 warn "11" "NOT RUNNING"
         elif [ "${IsDeamonRunning}" == " filter" ]; then
                 OK "5"
-        elif [ "${IsDeamonRunning2}" == "Table" ]; then
-                OK "5"
+		elif [ "${IsDeamonRunning2}" == "Table" ]; then
+				OK "5"
         else
                 CheckupErr
         fi
@@ -2383,6 +2482,7 @@ else
         CheckupErr
 fi
 }
+
 
 checkUncommonProtocols() {
 protocols="dccp sctp rds tipc"
@@ -2767,6 +2867,7 @@ done
     fi
 }
 
+
 checkAuditd() {
 AuditRules="/etc/audit/audit.rules"
 Aconf="/etc/audit/auditd.conf"
@@ -2801,6 +2902,9 @@ if [ "$IsAuditInstalled" == "1" ]; then
     else
         CheckupErr "with check for size of the log"
     fi
+
+
+
 
 CHECKUSERGROUPINFO() {
 echo -n "5.3.5 Check if we record events that modify User/Group information."
@@ -2918,6 +3022,7 @@ else
         CheckupErr
 fi
 }
+
 
 CHECKLOGINEVENTS() {
 echo -n "5.3.8 Check if we collect Login and Logout Events."
@@ -3284,67 +3389,68 @@ fi
                 fi
                rm -rf ${notMonitored} ${monitored}
 
-            echo -n "5.3.13 Check if we monitor successful file system mounts." # 64 bit system
-            # check if the option doesn't have '#' at the start
-            isMountMonitored=$(grep "mounts" $AuditRules | grep -v "^#"| wc -l)
-            if [ "${isMountMonitored}" -eq "1" ]; then
-                monitoredArch=$(grep "mounts" $AuditRules  | grep -v "^#" | awk -F"arch=b" '{print $2}' | cut -d" " -f 1)
-                warn "11" "ONLY ${monitoredArch} architecture is monitored"
-            elif [ "${isMountMonitored}" -eq "2" ]; then
-                OK "4"
-            else
-                err "4" "NOT MONITORED"
-            fi
 
-            echo -n "5.3.14 Check if we monitor file deletion events." # 64 bit system
-            isDeletionMonitored=$(grep "delete" $AuditRules  | grep -v "^#" | wc -l)
-            if [ "${isDeletionMonitored}" -eq "1" ]; then
-                delMonArch=$(grep "delete" $AuditRules  | grep -v "^#" | awk -F"arch=b" '{print $2}' | cut -d" " -f 1)
-                warn "11" "ONLY ${delMonArch} architecture is monitored"
-            elif [ "${isDeletionMonitored}" -eq "2" ]; then
-                OK "5"
-            else
-                err "5" "NOT MONITORED"
-            fi
-            
-            
-            echo -n "5.3.15 Check if we monitor changes to sudoers scope."
-            isSudoMonitored=$(grep "sudoers" $AuditRules  | grep -v "^#" | wc -l)
-            if [ "${isSudoMonitored}" -eq "1" ]; then
-                OK "5"
-            else
-                err "5" "NOT MONITORED"
-            fi
-            
-            
-            echo -n "5.3.16 Check if we monitor system administrator actions."
-            sudoersChanges=$(grep "\-w /var/log/sudo.log \-p wa \-k" $AuditRules  | grep -v "^#" | wc -l)
-            if [ "${sudoersChanges}" -eq "1" ]; then
-                OK "4"
-            else
-                err "4" "NOT MONITORED"
-            fi
-            
-            
-            echo -n "5.3.17 Check if we monitor kernel module loading and unloading."
-            kernelModulesMonitored=$(grep "\-w /sbin/insmod \|\-w /sbin/rmmod \|\-w /sbin/modprobe \|\-S init_module" $AuditRules | grep -v "^#" | wc -l)
-            if [ "${kernelModulesMonitored}" -lt "4" ] && [ "${kernelModulesMonitored}" -ge "1" ] ; then
-                getModules=$(grep "\-w /sbin/insmod \|\-w /sbin/rmmod \|\-w /sbin/modprobe \|\-S init_module" $AuditRules | egrep -v "^#" | grep -oh "init_module\|delete_module\|insmod\|rmmod\|modprobe" | tr "\n" " ")
-                warn "11" "Only ${getModules} are monitored."
-            elif [ "${kernelModulesMonitored}" -eq "4" ]; then
-                OK "4"
-            else
-                err "4" "NOT MONITORED"    
-            fi
+			echo -n "5.3.13 Check if we monitor successful file system mounts." # 64 bit system
+			# check if the option doesn't have '#' at the start
+			isMountMonitored=$(grep "mounts" $AuditRules | grep -v "^#"| wc -l)
+			if [ "${isMountMonitored}" -eq "1" ]; then
+				monitoredArch=$(grep "mounts" $AuditRules  | grep -v "^#" | awk -F"arch=b" '{print $2}' | cut -d" " -f 1)
+				warn "11" "ONLY ${monitoredArch} architecture is monitored"
+			elif [ "${isMountMonitored}" -eq "2" ]; then
+				OK "4"
+			else
+				err "4" "NOT MONITORED"
+			fi
 
-            echo -n "5.3.18 Check if audit configuration is immutable."
-            ImmuneStatus=$(grep "^-e 2" $AuditRules | wc -l)
-            if [ "${ImmuneStatus}" -eq "1" ]; then
-                OK "5"
-            else
-                err "5" "DISABLED"
-            fi
-            
+			echo -n "5.3.14 Check if we monitor file deletion events." # 64 bit system
+			isDeletionMonitored=$(grep "delete" $AuditRules  | grep -v "^#" | wc -l)
+			if [ "${isDeletionMonitored}" -eq "1" ]; then
+				delMonArch=$(grep "delete" $AuditRules  | grep -v "^#" | awk -F"arch=b" '{print $2}' | cut -d" " -f 1)
+				warn "11" "ONLY ${delMonArch} architecture is monitored"
+			elif [ "${isDeletionMonitored}" -eq "2" ]; then
+				OK "5"
+			else
+				err "5" "NOT MONITORED"
+			fi
+			
+			
+			echo -n "5.3.15 Check if we monitor changes to sudoers scope."
+			isSudoMonitored=$(grep "sudoers" $AuditRules  | grep -v "^#" | wc -l)
+			if [ "${isSudoMonitored}" -eq "1" ]; then
+				OK "5"
+			else
+				err "5" "NOT MONITORED"
+			fi
+			
+			
+			echo -n "5.3.16 Check if we monitor system administrator actions."
+			sudoersChanges=$(grep "\-w /var/log/sudo.log \-p wa \-k" $AuditRules  | grep -v "^#" | wc -l)
+			if [ "${sudoersChanges}" -eq "1" ]; then
+				OK "4"
+			else
+				err "4" "NOT MONITORED"
+			fi
+			
+			
+			echo -n "5.3.17 Check if we monitor kernel module loading and unloading."
+			kernelModulesMonitored=$(grep "\-w /sbin/insmod \|\-w /sbin/rmmod \|\-w /sbin/modprobe \|\-S init_module" $AuditRules | grep -v "^#" | wc -l)
+			if [ "${kernelModulesMonitored}" -lt "4" ] && [ "${kernelModulesMonitored}" -ge "1" ] ; then
+				getModules=$(grep "\-w /sbin/insmod \|\-w /sbin/rmmod \|\-w /sbin/modprobe \|\-S init_module" $AuditRules | egrep -v "^#" | grep -oh "init_module\|delete_module\|insmod\|rmmod\|modprobe" | tr "\n" " ")
+				warn "11" "Only ${getModules} are monitored."
+			elif [ "${kernelModulesMonitored}" -eq "4" ]; then
+				OK "4"
+			else
+				err "4" "NOT MONITORED"	
+			fi
+
+			echo -n "5.3.18 Check if audit configuration is immutable."
+			ImmuneStatus=$(grep "^-e 2" $AuditRules | wc -l)
+			if [ "${ImmuneStatus}" -eq "1" ]; then
+				OK "5"
+			else
+				err "5" "DISABLED"
+			fi
+			
 
                 elif [ "$checkArch" == "sparc" ]; then
                         warn "11" "this check won't work since you're on sparc"
@@ -3501,7 +3607,7 @@ fi
             # check if file has more than 0 bytes in size
             if [[ -s ${monitored} ]] ; then
             # check the count of not monitored and complain about them
-                if [ "${notMonitoredCount}" -eq "0" ]; then
+				if [ "${notMonitoredCount}" -eq "0" ]; then
                     OK "5" "We are monitoring ${monitoredCount} privileged programs."
                 else
                     warn "11" "We have ${notMonitoredCount} NOT monitored privileged programs out of ${privilegedCount} ."
@@ -3511,56 +3617,61 @@ fi
             fi
             rm -rf ${notMonitored} ${monitored}
 
-            echo -n "5.3.13 Check if we monitor successful file system mounts." # 32 bit system
-            isMountMonitored=$(grep "mounts" $AuditRules | grep -v "^#"| wc -l)
-            if [ "${isMountMonitored}" -ge "1" ]; then
-                OK "4"
-            else
-                err "4" "NOT MONITORED"
-            fi
 
-            echo -n "5.3.14 Check if we monitor file deletion events."
-            isDeletionMonitored=$(grep "delete" $AuditRules | grep -v "^#" | wc -l)
-            if [ "${isDeletionMonitored}" -eq "1" ]; then
-                OK "5"
-            else
-                err "5" "NOT MONITORED"
-            fi
+			echo -n "5.3.13 Check if we monitor successful file system mounts." # 32 bit system
+			isMountMonitored=$(grep "mounts" $AuditRules | grep -v "^#"| wc -l)
+			if [ "${isMountMonitored}" -ge "1" ]; then
+				OK "4"
+			else
+				err "4" "NOT MONITORED"
+			fi
 
-            echo -n "5.3.15 Check if we monitor changes to sudoers scope."
-            isSudoMonitored=$(grep "sudoers" $AuditRules | grep -v "^#" | wc -l)
-            if [ "${isSudoMonitored}" -eq "1" ]; then
-                OK "5"
-            else
-                err "5" "NOT MONITORED"
-            fi
 
-            echo -n "5.3.16 Check if we monitor system administrator actions."
-            sudoersChanges=$(grep "\-w /var/log/sudo.log \-p wa \-k" $AuditRules  | grep -v "^#" | wc -l)
-            if [ "${sudoersChanges}" -eq "1" ]; then
-                OK "4"
-            else
-                err "4" "NOT MONITORED"
-            fi
+			echo -n "5.3.14 Check if we monitor file deletion events." 
+			isDeletionMonitored=$(grep "delete" $AuditRules | grep -v "^#" | wc -l)
+			if [ "${isDeletionMonitored}" -eq "1" ]; then
+				OK "5"
+			else
+				err "5" "NOT MONITORED"
+			fi
 
-            echo -n "5.3.17 Check if we monitor kernel module loading and unloading."
-            kernelModulesMonitored=$(grep "\-w /sbin/insmod \|\-w /sbin/rmmod \|\-w /sbin/modprobe \|\-S init_module" $AuditRules | grep -v "^#" | wc -l)
-            if [ "${kernelModulesMonitored}" -lt "4" ] && [ "${kernelModulesMonitored}" -ge "1" ] ; then
-                getModules=$(grep "\-w /sbin/insmod \|\-w /sbin/rmmod \|\-w /sbin/modprobe \|\-S init_module" $AuditRules | egrep -v "^#" | grep -oh "init_module\|delete_module\|insmod\|rmmod\|modprobe" | tr "\n" " ")
-                warn "11" "Only ${getModules} are monitored."
-            elif [ "${kernelModulesMonitored}" -eq "4" ]; then
-                OK "4"
-            else
-                err "4" "NOT MONITORED"    
-            fi
+			echo -n "5.3.15 Check if we monitor changes to sudoers scope."
+			isSudoMonitored=$(grep "sudoers" $AuditRules | grep -v "^#" | wc -l)
+			if [ "${isSudoMonitored}" -eq "1" ]; then
+				OK "5"
+			else
+				err "5" "NOT MONITORED"
+			fi
 
-            echo -n "5.3.18 Check if audit configuration is immutable."
-            ImmuneStatus=$(grep "^-e 2" $AuditRules | wc -l)
-            if [ "${ImmuneStatus}" -eq "1" ]; then
-                OK "5"
-            else
-                err "5" "DISABLED"
-            fi
+
+			echo -n "5.3.16 Check if we monitor system administrator actions."
+			sudoersChanges=$(grep "\-w /var/log/sudo.log \-p wa \-k" $AuditRules  | grep -v "^#" | wc -l)
+			if [ "${sudoersChanges}" -eq "1" ]; then
+				OK "4"
+			else
+				err "4" "NOT MONITORED"
+			fi
+
+
+			echo -n "5.3.17 Check if we monitor kernel module loading and unloading."
+			kernelModulesMonitored=$(grep "\-w /sbin/insmod \|\-w /sbin/rmmod \|\-w /sbin/modprobe \|\-S init_module" $AuditRules | grep -v "^#" | wc -l)
+			if [ "${kernelModulesMonitored}" -lt "4" ] && [ "${kernelModulesMonitored}" -ge "1" ] ; then
+				getModules=$(grep "\-w /sbin/insmod \|\-w /sbin/rmmod \|\-w /sbin/modprobe \|\-S init_module" $AuditRules | egrep -v "^#" | grep -oh "init_module\|delete_module\|insmod\|rmmod\|modprobe" | tr "\n" " ")
+				warn "11" "Only ${getModules} are monitored."
+			elif [ "${kernelModulesMonitored}" -eq "4" ]; then
+				OK "4"
+			else
+				err "4" "NOT MONITORED"	
+			fi
+
+
+			echo -n "5.3.18 Check if audit configuration is immutable."
+			ImmuneStatus=$(grep "^-e 2" $AuditRules | wc -l)
+			if [ "${ImmuneStatus}" -eq "1" ]; then
+				OK "5"
+			else
+				err "5" "DISABLED"
+			fi
                 else
                         CheckupErr "with check if you are on 64 or 32 bit machine"
                 fi
@@ -3583,7 +3694,7 @@ isLogrotateInstalled=$(rpm -qa logrotate | wc -l)
 if [ "$isLogrotateInstalled" = "0" ]; then
     err "6" "package NOT installed."
 elif [ "$isLogrotateInstalled" = "1" ]; then
-    logrotateSyslog="/etc/logrotate.d/syslog"
+	logrotateSyslog="/etc/logrotate.d/syslog"
     # check if config file exists
     if [ -e "${logrotateSyslog}" ]; then
         # check if configured log files are not commented out
@@ -3639,6 +3750,7 @@ else
 fi
 }
 
+
 checkAnacronCrontabPermissions() {
 cronFiles="/etc/anacrontab /etc/crontab /etc/cron.hourly /etc/cron.daily /etc/cron.weekly /etc/cron.monthly /etc/cron.d"
 COUNTER="2"
@@ -3654,6 +3766,7 @@ COUNTER=$((COUNTER+1))
     fi
  done
 }
+
 
 checkAt() {
 
@@ -3716,6 +3829,7 @@ else
 fi
 }
 
+
 checkCrontabRestriction() {
 
 crondeny="/etc/cron.deny"
@@ -3776,6 +3890,7 @@ else
     CheckupErr
 fi
 }
+
 
 checkSSH() {
 sshconfig="/etc/ssh/sshd_config"
@@ -3980,6 +4095,9 @@ else
 fi
 }
 
+
+
+
 checkSystemAccounts() {
 getNonSystemUsers=$(grep -v "nologin" /etc/passwd | awk -F":" '($3 >= 500 && $3 > 0 && $1 != "sync" && $1 != "shutdown" && $1 != "halt")  {print $1}')
 echo -n "7.1 - Check if System Accounts have no access to interactive shell"
@@ -4167,6 +4285,7 @@ else
 fi
 }
 
+
 checkBanner() {
 COUNTER="0"
 configFiles="/etc/issue /etc/motd"
@@ -4202,6 +4321,8 @@ for i in ${cFiles}
 #  - to implement later --
 }
 
+
+
 # 9 - System Maintenance
 checkSystem() {
 echo  "9.1 - Verify correct permissions on packaged system files"
@@ -4229,6 +4350,7 @@ while read line
 
 rm -rf ${allpkgs}
 
+
 # check permissions on config files
 # for monitoring if these file are changed we could use monit, tripwire, other mechanism
 passFile="/etc/passwd"
@@ -4249,6 +4371,7 @@ else
     warn "11" "${shadowFilePerms} INSTEAD OF 400"
 fi
 
+
 gshadowFile="/etc/gshadow"
 echo -n  "9.1.3 - Verify permissions on ${gshadowFile}"
 gshadowFilePerms=$(stat -c "%a" ${gshadowFile})
@@ -4258,6 +4381,7 @@ else
     warn "11" "${gshadowFilePerms} INSTEAD OF 400"
 fi
 
+
 groupFile="/etc/group"
 echo -n  "9.1.4 - Verify permissions on ${groupFile}"
 groupFilePerms=$(stat -c "%a" ${groupFile})
@@ -4266,6 +4390,7 @@ if [ "${groupFilePerms}" -eq "644" ]; then
 else
     warn "11" "${groupFilePerms} INSTEAD OF 400"
 fi
+
 
 files_to_verify="/etc/passwd /etc/shadow /etc/gshadow /etc/group"
 COUNTER="4"
@@ -4282,6 +4407,8 @@ for c in ${files_to_verify}
 
  done
 
+
+
 ## find world writable files:
 echo -n  "9.1.9 - Checking for world writable files"
 count_world_writable_files=$(find / -type f -perm -2 -print 2>/dev/null |xargs sudo file |egrep -v "/proc" | wc -l)
@@ -4293,9 +4420,13 @@ else
     Notice "2" "${show_ww_files}"
 fi
 
+
+
 ## IMPLEMENT THIS CHECK AT THE END !!
 ## find all broken symbolic links:
 #find_broken_symlinks=$(find -L  / -type l 2>/dev/null -print | wc -l)
+
+
 
 echo -n  "9.1.10 - Checking for un-owned files and directories"
 count_unowned_files=$(find / \( -type f -o -type d \) -nouser -print 2>/dev/null  | wc -l)
@@ -4306,6 +4437,7 @@ else
     warn "11" "${count_unowned_files} FOUND"
     Notice "2" "${show_ufiles}"
 fi
+
 
 echo -n  "9.1.11 - Checking for un-grouped files and directories"
 count_ungrouped_files=$(find / \( -type f -o -type d \) -nouser -print 2>/dev/null  | wc -l)
@@ -4344,6 +4476,7 @@ elif [ "${count_suid_files}" -gt "0" ]; then
      done
 fi
 
+
 echo -n  "9.1.13 - Checking for SGID system executables"
 # ===== NOTE: ========================================================
 # A favorite trick of crackers is to exploit SGID-root programs,
@@ -4371,6 +4504,7 @@ elif [ "${count_sgid_files}" -gt "0" ]; then
      done
 fi
 
+
 echo -n  "9.2.1 - Checking if password fields are empty"
 count_users_without_passwords=$(cat /etc/shadow | awk -F":" '($2 == "" ) {print $1 " does not have a password "}' | wc -l)
 users_without_passwords=$(cat /etc/shadow | awk -F":" '($2 == "" ) {print $1}' )
@@ -4395,6 +4529,7 @@ for d in ${etc_config_files}
     fi
  done
 
+
 echo -n  "9.2.5 - Checking if there is an account with UID 0 other than root"
 count_superuser_uids=$(cat /etc/passwd | awk -F":" '($3 == "0") { print $1}' | wc -l)
 if [ "${count_superuser_uids}" -eq "0" ]; then
@@ -4411,6 +4546,7 @@ elif [ "${count_superuser_uids}" -gt "1" ]; then
     get_bad_superuser=$(cat /etc/passwd | awk -F":" '($3 == "0") { print $1}' | grep -v "^root$")
     warn "11" "${count_superuser_uids} FOUND - change uid of ${get_bad_superuser} "
 fi
+
 
 echo  -n "9.2.6 - Checking root PATH integrity"
 ROOT_PATH_WARNINGS=()
@@ -4459,6 +4595,7 @@ else
     OK "7"
 fi
 
+
 echo  -n "9.2.7 - Verifying correct permissions on user's home directories"
 #==== 9.2.7 =================================================================
 #
@@ -4505,6 +4642,7 @@ else
     OK "3"
 fi
 
+
 echo  -n "9.2.8 - Checking user dot file permissions"
 #==== 9.2.8 =================================================================
 #
@@ -4542,6 +4680,7 @@ if [ "${count_warnings}" -gt "0" ]; then
 else
     OK "6"
 fi
+
 
 echo  -n "9.2.9 - Checking permissions on user .netrc files"
 #==== 9.2.9 =================================================================
@@ -4588,6 +4727,9 @@ if [ "${count_warnings}" -gt "0" ]; then
 else
     OK "5"
 fi
+
+
+
 
 echo  -n "9.2.10 - Checking for presence of user .rhosts files"
 #==== 9.2.10 =================================================================
@@ -4717,6 +4859,8 @@ else
     OK "5"
 fi
 
+
+
 echo  -n "9.2.14 - Verifying correct ownership on user's home directories"
 #==== 9.2.14 =================================================================
 #
@@ -4789,6 +4933,7 @@ fi
 
 rm -rf ${tmpCountFile}
 
+
 echo  -n "9.2.16 - Check for duplicate GIDs"
 #==== 9.2.16 =================================================================
 #
@@ -4822,6 +4967,8 @@ else
 fi
 
 rm -rf ${tmpCountFile2}
+
+
 
 echo  -n "9.2.17 - Check that reserved UIDs are assigned to System Accounts"
 #==== 9.2.17 =================================================================
@@ -4865,6 +5012,8 @@ fi
 
 rm -rf ${tmp_system_accounts} ${tmp_user_list}
 
+
+
 echo  -n "9.2.18 - Check for duplicate Usernames"
 #==== 9.2.18 =================================================================
 #
@@ -4886,6 +5035,7 @@ else
 
 fi
 
+
 echo  -n "9.2.19 - Check for duplicate Groupnames"
 #==== 9.2.19 =================================================================
 #
@@ -4904,155 +5054,166 @@ else
     OK "7"
 fi
 
+
 }
+
+
+
 
 ## 2nd way
 if [ "$AUDITMODE" = "0" ]; then
-    echo -e "\033[1;36mNOTICE: Audit Only Mode On - no changes will be made. \033[m"
+	echo -e "\033[1;36mNOTICE: Audit Only Mode On - no changes will be made. \033[m"
 
-            echo -n "1.1.1a - Checking if $TMP is on separate partition "
-        if [ "$CheckTmpMount" = "0" ]; then
+			echo -n "1.1.1a - Checking if $TMP is on separate partition "
+		if [ "$CheckTmpMount" = "0" ]; then
             #TmpMountErr
-            err "5" "/tmp NOT MOUNTED ON SEPARATE PARTITION"
-            skipNoticeA "Skipping parameter checks for $1 mount point."
+			err "5" "/tmp NOT MOUNTED ON SEPARATE PARTITION"
+			skipNoticeA "Skipping parameter checks for $1 mount point."
 
-            # check fstab even though /tmp is not mounted and display warning if /tmp is not mounted but is in /etc/fstab file
-                echo -n "1.1.1b - Checking $fstabName for $TMP "
-                    if [ "$CheckTmpFstab" = "0" ]; then
-                        #FstabNoTmpErr
-                        err "6" " $TMP missing from $fstabName"
-                        skipNoticeA "Skipping parameter checks for $TMP in $fstabName file."
+			# check fstab even though /tmp is not mounted and display warning if /tmp is not mounted but is in /etc/fstab file
+				echo -n "1.1.1b - Checking $fstabName for $TMP "
+					if [ "$CheckTmpFstab" = "0" ]; then
+						#FstabNoTmpErr
+						err "6" " $TMP missing from $fstabName"
+						skipNoticeA "Skipping parameter checks for $TMP in $fstabName file."
 
-                    else
-                        warn "11" "$TMP is NOT mounted but exist in $fstabName file !"
-                    fi
-        elif [ "$CheckTmpMount" = "1" ]; then
-                OK "5"
-                TmpCheck
-                FstabTmpCheck
+					else
+						warn "11" "$TMP is NOT mounted but exist in $fstabName file !"
+					fi
+		elif [ "$CheckTmpMount" = "1" ]; then
+				OK "5" 
+				TmpCheck
+				FstabTmpCheck
 
-        else
-                CheckupErr
-        fi
-            CheckVar
-            FstabVarCheck
-            CheckVarTmp
-            FstabVarTmpCheck
-            FstabVarlogCheck
-            CheckVarLog # and check if /var/log is in /etc/fstab
-            FstabVarLogAuditCheck
-            CheckVarLogAudit # test
-            #FstabVarlogCheck
-            #FstabVarLogAuditCheck
-            CheckHome
-            FstabHomeCheck
-            checkHomeNodev
-            fstabHomeNodevCheck
-            #
-            CheckRemovableMediaMount
-            CheckRemovableMediaFstab
-            RemMediaMsg
-            CheckNodevDevShmMount
-            CheckNodevDevShmFstab
-            CheckNosuidDevShmMount
-            CheckNosuidDevShmFstab
-            CheckNoexecDevShmMount
-            CheckNoexecDevShmFstab
-            CheckStickyBits
-            checkOSrelease
-            GPGcheck
-            checkYumUpdatesd
-            checkUpdates
-            VerifyPackageIntegrity
-            checkAIDEinstalled
-            checkGrubOwner
-            grubPassCheck
-            singleModeCheck
-            checkInteractiveBoot
-            checkRestrictionCoreDumps
-            checkBufferOverFlowProtection
-            checkRandomizedVAspace
-            checkNXsupport
-            checkPrelink
-            checkServerClientServices
-            checkXinetdService
-            checkStreamDgramServices
-            checkTcpmuxServer
-            checkUmask
-            checkXwindow
-            checkAvahi
-            checkCUPSservice
-            checkDHCPservice
-            checkNTPservice
-            checkNFSRPCservice
-            checkServices
-            checkServices2
-            checkSMTP
-            checkHostOnlyNetworkParameters
-            checkNetworkHostRouterParameters
-            checkTcpWrappers
-            checkHostAllowDeny
-            checkIPtables
-            checkUncommonProtocols
-            checkSyslog
-            checkRsyslog
-            checkAuditd
-            checkLogrotate
-            checkAnacron
-            checkCron
-            checkAnacronCrontabPermissions
-            checkAt
-            checkCrontabRestriction
-            checkSSH
-            checkPAM
-            checkSystemConsole
-            checkSUaccess
-            checkSystemAccounts
-            checkBanner
-            checkSystem
+
+		else
+				CheckupErr
+		fi
+			CheckVar
+			FstabVarCheck
+			CheckVarTmp
+			FstabVarTmpCheck
+			FstabVarlogCheck
+			CheckVarLog # and check if /var/log is in /etc/fstab
+			FstabVarLogAuditCheck
+			CheckVarLogAudit # test
+			#FstabVarlogCheck
+			#FstabVarLogAuditCheck
+			CheckHome
+			FstabHomeCheck
+			checkHomeNodev
+			fstabHomeNodevCheck
+			#
+			CheckRemovableMediaMount
+			CheckRemovableMediaFstab
+			RemMediaMsg
+			CheckNodevDevShmMount
+			CheckNodevDevShmFstab
+			CheckNosuidDevShmMount
+			CheckNosuidDevShmFstab
+			CheckNoexecDevShmMount
+			CheckNoexecDevShmFstab
+			CheckStickyBits
+			checkOSrelease
+			GPGcheck
+			checkYumUpdatesd
+			checkUpdates
+			VerifyPackageIntegrity
+			checkAIDEinstalled
+			checkGrubOwner
+			grubPassCheck
+			singleModeCheck
+			checkInteractiveBoot
+			checkRestrictionCoreDumps
+			checkBufferOverFlowProtection
+			checkRandomizedVAspace
+			checkNXsupport
+			checkPrelink
+			checkServerClientServices
+			checkXinetdService
+			checkStreamDgramServices
+			checkTcpmuxServer
+			checkUmask
+			checkXwindow
+			checkAvahi
+			checkCUPSservice
+			checkDHCPservice
+			checkNTPservice
+			checkNFSRPCservice
+			checkServices
+			checkServices2
+			checkSMTP
+			checkHostOnlyNetworkParameters
+			checkNetworkHostRouterParameters
+			checkTcpWrappers
+			checkHostAllowDeny
+			checkIPtables
+			checkUncommonProtocols
+			checkSyslog
+			checkRsyslog
+			checkAuditd
+			checkLogrotate
+			checkAnacron
+			checkCron
+			checkAnacronCrontabPermissions
+			checkAt
+			checkCrontabRestriction
+			checkSSH
+			checkPAM
+			checkSystemConsole
+			checkSUaccess
+			checkSystemAccounts
+			checkBanner
+			checkSystem
+
 
 elif [ "$AUDITMODE" = "1" ]; then
-    echo -e "\033[1;36mNOTICE: Audit & Fix Mode On - Make sure you have good backups! \033[m"
-            # THIS MODE NEEDS MORE WORK
-                echo -n "1.1.1a - Checking if $TMP is on separate partition "
-        if [ "$CheckTmpMount" = "0" ]; then
+	echo -e "\033[1;36mNOTICE: Audit & Fix Mode On - Make sure you have good backups! \033[m"
+			# THIS MODE NEEDS MORE WORK
+				echo -n "1.1.1a - Checking if $TMP is on separate partition "
+		if [ "$CheckTmpMount" = "0" ]; then
             #TmpMountErr
-            err "5" "NOT MOUNTED ON SEPARATE PARTITION"
-            skipNotice $TMP
+			err "5" "NOT MOUNTED ON SEPARATE PARTITION"
+			skipNotice $TMP
 
-            echo -e " ............... Please mount $TMP partition manually !!"
-            echo -e " .............. \033[1;36mChange requires reboot. \033[m"
-            # check fstab even though /tmp is not mounted and display warning if /tmp is not mounted but is in /etc/fstab file
-                echo -n "1.1.1b - Checking $fstabName for $TMP "
-                    if [ "$CheckTmpFstab" = "0" ]; then
-                        #FstabNoTmpErr
-                        err "6" " $TMP missing from $fstabName"
-                        skipNoticeA "Skipping parameter checks for $TMP in $fstabName file."
-                    else
-                        echo -e " ............... Warning: $TMP is NOT mounted but exist in $fstabName file  "
-                        echo -e " ............... Please correct $fstabName or mount $TMP manually. "
-                    fi
+			echo -e " ............... Please mount $TMP partition manually !!"
+			echo -e " .............. \033[1;36mChange requires reboot. \033[m"
+			# check fstab even though /tmp is not mounted and display warning if /tmp is not mounted but is in /etc/fstab file
+				echo -n "1.1.1b - Checking $fstabName for $TMP "
+					if [ "$CheckTmpFstab" = "0" ]; then
+						#FstabNoTmpErr
+						err "6" " $TMP missing from $fstabName"
+						skipNoticeA "Skipping parameter checks for $TMP in $fstabName file."
+					else
+						echo -e " ............... Warning: $TMP is NOT mounted but exist in $fstabName file  "
+						echo -e " ............... Please correct $fstabName or mount $TMP manually. "
+					fi
 
-        elif [ "$CheckTmpMount" = "1" ]; then
-            OK "5"
 
-                TmpCheckFix
-                FstabTmpCheckFix
 
-        else
-            CheckupErr
-        fi
-            CheckVarFix
-            FstabVarCheckFix
-            CheckVarTmpFix
-            FstabVarTmpCheckFix
-            CheckVarLogFix
-            FstabVarLogCheckFix
-            CheckNodevRemMediaFix
+
+		elif [ "$CheckTmpMount" = "1" ]; then
+			OK "5"
+
+				TmpCheckFix
+				FstabTmpCheckFix
+
+
+		else
+			CheckupErr
+		fi
+			CheckVarFix
+			FstabVarCheckFix
+			CheckVarTmpFix
+			FstabVarTmpCheckFix
+			CheckVarLogFix
+			FstabVarLogCheckFix
+			CheckNodevRemMediaFix
 else
-    echo -e "\033[1;36mNOTICE: Wrong Mode selected! Please correct the option & re-run the script. \033[m "
-    exit 1
+	echo -e "\033[1;36mNOTICE: Wrong Mode selected! Please correct the option & re-run the script. \033[m "
+	exit 1
 fi
+
 
 }
 
@@ -5089,3 +5250,32 @@ echo -e "You have \033[1;36m $typeCount $inputType \033[m which is \033[1;36m $i
 fi
 
 }
+
+calcErros() {
+errNr=$(grep "ERROR" $result | wc -l)
+countPercentage "Errors" "$errNr"
+}
+
+calcWarwnings() {
+warNr=$(grep "WARNING" $result | wc -l)
+countPercentage "Warnings" "$warNr"
+}
+
+calcOK() {
+OKnr=$(grep "OK" $result | wc -l)
+countPercentage "Successes" "$OKnr"
+}
+
+calcMISC() {
+other=$(grep -v "OK\|WARNING\|ERROR" $result | grep "^[0-9]" | wc -l)
+countPercentage "Notice messages" "$other"
+}
+
+calcErros
+calcWarwnings
+calcMISC
+calcOK
+}
+
+
+AnalyzeResult
